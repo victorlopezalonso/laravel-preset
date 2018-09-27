@@ -138,6 +138,8 @@ class Preset extends LaravelPreset
 
     public static function compileFront()
     {
+        self::exec('npm install');
+        
         self::exec('npm run dev');
     }
 }
