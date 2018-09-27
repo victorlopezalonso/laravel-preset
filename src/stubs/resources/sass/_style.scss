@@ -1,0 +1,17 @@
+@import "variables";
+
+$primary: $turquoise;
+
+// Navbar
+$navbar-background-color: $white;
+$navbar-item-active-color: $black;
+$navbar-item-active-background-color: $white-ter;
+$navbar-item-hover-background-color: $white-ter;
+
+// Inputs
+$input-disabled-border-color: $grey-lighter;
+$input-focus-border-color: $primary;
+
+// Modals
+$modal-background-background-color: rgba(black, 0.70);
+$modal-card-body-background-color: white;

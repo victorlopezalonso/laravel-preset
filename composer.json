@@ -1,0 +1,23 @@
+{
+    "name": "vlopez/quadram-preset",
+    "description": "The default Quadram Laravel preset",
+    "keywords": ["Laravel", "Laravel preset", "Quadram"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Víctor López Alonso",
+            "email": "vlopez@quadram.mobi"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Quadram\\LaravelPreset\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["Quadram\\LaravelPreset\\QuadramServiceProvider"]
+        }
+    }
+}
