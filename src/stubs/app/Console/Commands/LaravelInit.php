@@ -9,7 +9,6 @@ use Illuminate\Console\Command;
 
 class LaravelInit extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -26,6 +25,7 @@ class LaravelInit extends Command
 
     /**
      * Execute the console command.
+     *
      * @throws \Exception
      */
     public function handle()
@@ -46,7 +46,7 @@ class LaravelInit extends Command
     }
 
     /**
-     * Welcome message
+     * Welcome message.
      */
     protected function welcome()
     {
@@ -55,18 +55,18 @@ class LaravelInit extends Command
     }
 
     /**
-     * Generate the app key and hash
+     * Generate the app key and hash.
      *
      * @throws \Exception
      */
     protected function generateAppKey()
     {
-        if (strlen(config('app.key')) === 0) {
+        if (0 === \strlen(config('app.key'))) {
             $this->info('Generating app key...');
             $this->call('key:generate');
         }
 
-        if (!env('APP_HASH')) {
+        if (! env('APP_HASH')) {
             $this->info('Generating app secret...');
             $hash = base64_encode(random_bytes(10));
             Console::updateEnvironmentFile(['APP_HASH' => $hash]);
@@ -74,12 +74,85 @@ class LaravelInit extends Command
     }
 
     /**
-     * Ask the user for the DB configuration and updates the .env file
+     * Create the supervisor .conf file and start to listen.
+     */
+    protected function configureSupervisor()
+    {
+        switch (env('APP_ENV')) {
+            case DEVELOPMENT_ENVIRONMENT:
+                $numProcesses = 2;
+
+                break;
+            case STAGING_ENVIRONMENT:
+                $numProcesses = 3;
+
+                break;
+            case PRODUCTION_ENVIRONMENT:
+                $numProcesses = 10;
+
+                break;
+            default:
+                return;
+        }
+
+        $path = base_path();
+        $appName = preg_replace('/\s+/', '', env('APP_NAME')).ucwords(env('APP_ENV'));
+
+        $file = "[program: ${appName}]".PHP_EOL.
+            'process_name=%(program_name)s_%(process_num)02d'.PHP_EOL.
+            "command=php ${path}/artisan queue:work --tries=100".PHP_EOL.
+            'autostart=true'.PHP_EOL.
+            'autorestart=true'.PHP_EOL.
+            'user='.get_current_user().PHP_EOL.
+            "numprocs=${numProcesses}".PHP_EOL.
+            'redirect_stderr=true'.PHP_EOL.
+            "stdout_logfile=${path}/storage/logs/worker${appName}.log";
+
+        $filePath = "/etc/supervisor/conf.d/${appName}.conf";
+
+        system('echo '.escapeshellarg($file)." | sudo tee -a ${filePath}");
+
+        Console::exec([
+            'sudo supervisorctl reread',
+            'sudo supervisorctl update',
+            "sudo supervisorctl start ${appName}:*",
+        ]);
+    }
+
+    /**
+     * Run the migrations.
+     */
+    protected function migrate()
+    {
+        $this->info('Migrating database');
+        $this->call('migrate', ['--force' => true]);
+    }
+
+    /**
+     * Create the public link to the storage/public folder.
+     */
+    protected function storageLink()
+    {
+        $this->call('storage:link');
+    }
+
+    /**
+     * Compile the front end files.
+     */
+    protected function compileFrontEnd()
+    {
+        $this->info('Compiling front-end stuff');
+        system('yarn install');
+    }
+
+    /**
+     * Ask the user for the DB configuration and updates the .env file.
      */
     private function askForConfiguration()
     {
         if (env('APP_ENV')) {
             $this->migrate();
+
             return;
         }
 
@@ -87,7 +160,7 @@ class LaravelInit extends Command
 
         do {
             system('clear');
-            $this->info("Database configuration.");
+            $this->info('Database configuration.');
 
             $config['APP_ENV'] = $this->choice('Environment', [
                 LOCAL_ENVIRONMENT       => LOCAL_ENVIRONMENT,
@@ -96,9 +169,9 @@ class LaravelInit extends Command
                 PRODUCTION_ENVIRONMENT  => PRODUCTION_ENVIRONMENT,
             ], LOCAL_ENVIRONMENT);
 
-            $config['APP_DEBUG'] = $config['APP_ENV'] !== PRODUCTION_ENVIRONMENT;
+            $config['APP_DEBUG'] = PRODUCTION_ENVIRONMENT !== $config['APP_ENV'];
 
-            $config['APP_NAME'] = '"' . $this->ask('Name of the app') . '"';
+            $config['APP_NAME'] = '"'.$this->ask('Name of the app').'"';
             $config['APP_URL'] = $this->ask('Public url');
 
             $config['DB_CONNECTION'] = $this->choice('Database driver', [
@@ -108,17 +181,17 @@ class LaravelInit extends Command
                 'sqlite-e2e' => 'SQLite',
             ], 'mysql');
 
-            if ($config['DB_CONNECTION'] === 'sqlite-e2e') {
+            if ('sqlite-e2e' === $config['DB_CONNECTION']) {
                 $config['DB_DATABASE'] = $this->ask('Absolute path to the DB file');
             } else {
                 $config['DB_HOST'] = $this->ask('DB host', 'localhost');
                 $config['DB_PORT'] = $this->ask('DB port', '3306');
                 $config['DB_DATABASE'] = $this->ask('DB name');
                 $config['DB_USERNAME'] = $this->ask('DB user', 'root');
-                $config['DB_PASSWORD'] = (string)$this->secret('DB password', false);
+                $config['DB_PASSWORD'] = (string) $this->secret('DB password', false);
             }
 
-            $config['MAIL_FROM_NAME'] = (string)$this->ask('Mail from name', $config['APP_NAME']);
+            $config['MAIL_FROM_NAME'] = (string) $this->ask('Mail from name', $config['APP_NAME']);
             $config['MAIL_FROM_ADDRESS'] = $this->ask('Mail from address');
             $config['MAIL_DRIVER'] = $this->ask('Mail driver', 'smtp');
             $config['MAIL_HOST'] = $this->ask('Mail host', 'smtp.mailtrap.io');
@@ -126,17 +199,16 @@ class LaravelInit extends Command
             $config['MAIL_ENCRYPTION'] = $this->choice('Mail encryption', [
                 'ssl'           => 'ssl',
                 'tls'           => 'tls',
-                'no encryption' => null
+                'no encryption' => null,
             ], 'ssl');
 
-            $config['MAIL_USERNAME'] = (string)$this->ask('Mail username');
-            $config['MAIL_PASSWORD'] = (string)$this->secret('Mail password', false);
+            $config['MAIL_USERNAME'] = (string) $this->ask('Mail username');
+            $config['MAIL_PASSWORD'] = (string) $this->secret('Mail password', false);
 
-            $config['DEPLOY_MODE'] = ($config['APP_ENV'] === PRODUCTION_ENVIRONMENT) ? WEBHOOK_DEPLOY : AUTO_DEPLOY;
+            $config['DEPLOY_MODE'] = (PRODUCTION_ENVIRONMENT === $config['APP_ENV']) ? WEBHOOK_DEPLOY : AUTO_DEPLOY;
 
             $this->table(array_keys($config), [$config]);
-
-        } while (!$this->confirm('Proceed with this configuration?'));
+        } while (! $this->confirm('Proceed with this configuration?'));
 
         //Set the config so that the next DB attempt uses refreshed credentials
         config([
@@ -162,84 +234,23 @@ class LaravelInit extends Command
     }
 
     /**
-     * Create the supervisor .conf file and start to listen
-     */
-    protected function configureSupervisor()
-    {
-        switch (env('APP_ENV')) {
-            case DEVELOPMENT_ENVIRONMENT:
-                $numProcesses = 2;
-                break;
-            case STAGING_ENVIRONMENT:
-                $numProcesses = 3;
-                break;
-            case PRODUCTION_ENVIRONMENT:
-                $numProcesses = 10;
-                break;
-            default:
-                return;
-        }
-
-        $path = base_path();
-        $appName = preg_replace('/\s+/', '', env('APP_NAME')) . ucwords(env('APP_ENV'));
-
-        $file = "[program: $appName]" . PHP_EOL .
-            "process_name=%(program_name)s_%(process_num)02d" . PHP_EOL .
-            "command=php $path/artisan queue:work --tries=100" . PHP_EOL .
-            "autostart=true" . PHP_EOL .
-            "autorestart=true" . PHP_EOL .
-            "user=" . get_current_user() . PHP_EOL .
-            "numprocs=$numProcesses" . PHP_EOL .
-            "redirect_stderr=true" . PHP_EOL .
-            "stdout_logfile=$path/storage/logs/worker$appName.log";
-
-        $filePath = "/etc/supervisor/conf.d/$appName.conf";
-
-        system("echo " . escapeshellarg($file) . " | sudo tee -a $filePath");
-
-        Console::exec([
-            "sudo supervisorctl reread",
-            "sudo supervisorctl update",
-            "sudo supervisorctl start $appName:*"
-        ]);
-    }
-
-    /**
-     * Run the migrations
-     */
-    protected function migrate()
-    {
-        $this->info('Migrating database');
-        $this->call('migrate', ['--force' => true]);
-    }
-
-    /**
      * Set up the admin account.
      */
     private function setUpAdminAccount()
     {
-        if (!User::count()) {
+        if (! User::count()) {
             $this->call('laravel:create-admin-user');
         }
     }
 
     /**
-     * Create the public link to the storage/public folder
-     */
-    protected function storageLink()
-    {
-        $this->call('storage:link');
-    }
-
-    /**
-     * Install passport
+     * Install passport.
      */
     private function initPassport()
     {
-        if (!env('OAUTH_EXPIRING_CLIENT_ID') || !env('OAUTH_EXPIRING_CLIENT_SECRET')) {
-
+        if (! env('OAUTH_EXPIRING_CLIENT_ID') || ! env('OAUTH_EXPIRING_CLIENT_SECRET')) {
             $this->call('passport:keys', ['--force' => true]);
-            $this->call("passport:install", ['--force' => true]);
+            $this->call('passport:install', ['--force' => true]);
 
             //Password client for expiring tokens
             $client = Client::where('password_client', true)->first();
@@ -255,14 +266,5 @@ class LaravelInit extends Command
 
             $this->info('.env file updated with oauth client credentials');
         }
-    }
-
-    /**
-     * Compile the front end files
-     */
-    protected function compileFrontEnd()
-    {
-        $this->info('Compiling front-end stuff');
-        system('yarn install');
     }
 }

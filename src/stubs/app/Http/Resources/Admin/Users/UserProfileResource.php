@@ -7,16 +7,16 @@ use Illuminate\Http\Resources\Json\Resource;
 
 class UserProfileResource extends Resource
 {
-
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
+     *
      * @return array
      */
     public function toArray($request)
     {
-        /** @var User $this */
+        // @var User $this
         return [
             'id'                   => $this->id,
             'uuid'                 => $this->uuid,

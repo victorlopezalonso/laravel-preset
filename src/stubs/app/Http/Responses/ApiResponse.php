@@ -3,14 +3,13 @@
 namespace App\Http\Responses;
 
 use App\Http\Requests\Headers;
-use Illuminate\Contracts\Support\Responsable;
-use Illuminate\Http\Resources\Json\Resource;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Resources\Json\Resource;
+use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ApiResponse implements Responsable
 {
-
     /** @var int HTTP status code */
     private $status = HTTP_CODE_200_OK;
 
@@ -19,6 +18,7 @@ class ApiResponse implements Responsable
 
     /**
      * @param int $status
+     *
      * @return $this
      */
     public function withStatus($status)
@@ -30,6 +30,7 @@ class ApiResponse implements Responsable
 
     /**
      * @param $message
+     *
      * @return $this
      */
     public function withMessage($message)
@@ -40,8 +41,10 @@ class ApiResponse implements Responsable
     }
 
     /**
-     * Set the data response from a simple value, a Resource or a ResourceCollection
+     * Set the data response from a simple value, a Resource or a ResourceCollection.
+     *
      * @param mixed $data
+     *
      * @return $this
      */
     public function withData($data = null)
@@ -57,6 +60,7 @@ class ApiResponse implements Responsable
 
     /**
      * @param int $code
+     *
      * @return $this
      */
     public function withErrorCode(int $code)
@@ -68,6 +72,7 @@ class ApiResponse implements Responsable
 
     /**
      * @param string $errorMessage
+     *
      * @return $this
      */
     public function withErrorMessage(string $errorMessage)
@@ -79,6 +84,7 @@ class ApiResponse implements Responsable
 
     /**
      * @param array $validations
+     *
      * @return $this
      */
     public function withValidations($validations)
@@ -89,38 +95,35 @@ class ApiResponse implements Responsable
     }
 
     /**
-     * Write a daily log with failed requests
+     * Create an HTTP response that represents the object.
+     *
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Http\Response
      */
-    private function writeLog()
+    public function toResponse($request)
     {
+        $this->writeLog();
 
-        if ($this->status < HTTP_CODE_500_INTERNAL_SERVER_ERROR || env('APP_ENV') === TESTING_ENVIRONMENT) {
-            return;
-        }
-
-        $log = implode(PHP_EOL, [
-            request()->getMethod() . ' ' . request()->getPathInfo(),
-            'Headers: ' . json_encode(Headers::asArray()),
-            'Params: ' . json_encode(request()->all()),
-            'Response: ' . json_encode($this->response)
-        ]);
-
-        Log::emergency(PHP_EOL . PHP_EOL . $log . PHP_EOL);
+        return response()->json($this->response, $this->status, [JSON_UNESCAPED_UNICODE]);
     }
 
     /**
-     * Return if the data passed to the response is an instance of Resource or ResourceCollection
+     * Return if the data passed to the response is an instance of Resource or ResourceCollection.
+     *
      * @param $data
+     *
      * @return bool
      */
     protected function isResourceOrCollection($data)
     {
-        return (get_parent_class($data) === Resource::class || get_parent_class($data) === ResourceCollection::class);
+        return Resource::class === get_parent_class($data) || ResourceCollection::class === get_parent_class($data);
     }
 
     /**
-     * Set the response data and pagination values from a Resource or ResourceCollection
-     * @param ResourceCollection|Resource $data
+     * Set the response data and pagination values from a Resource or ResourceCollection.
+     *
+     * @param resource|ResourceCollection $data
      */
     protected function setDataAndPaginationFromResource($data)
     {
@@ -130,7 +133,6 @@ class ApiResponse implements Responsable
         $meta = $data->response()->getData()->meta ?? null;
 
         if ($links && $meta) {
-
             $total = ceil($meta->total / $meta->per_page);
 
             $this->response['paginator'] = [
@@ -143,20 +145,25 @@ class ApiResponse implements Responsable
                 //'nextLink'    => $links->next,
                 //'lastLink'    => $links->last,
             ];
-
         }
     }
 
     /**
-     * Create an HTTP response that represents the object.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * Write a daily log with failed requests.
      */
-    public function toResponse($request)
+    private function writeLog()
     {
-        $this->writeLog();
+        if ($this->status < HTTP_CODE_500_INTERNAL_SERVER_ERROR || TESTING_ENVIRONMENT === env('APP_ENV')) {
+            return;
+        }
 
-        return response()->json($this->response, $this->status, [JSON_UNESCAPED_UNICODE]);
+        $log = implode(PHP_EOL, [
+            request()->getMethod().' '.request()->getPathInfo(),
+            'Headers: '.json_encode(Headers::asArray()),
+            'Params: '.json_encode(request()->all()),
+            'Response: '.json_encode($this->response),
+        ]);
+
+        Log::emergency(PHP_EOL.PHP_EOL.$log.PHP_EOL);
     }
 }

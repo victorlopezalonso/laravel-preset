@@ -6,12 +6,13 @@ use App\Models\Copy;
 
 class ApiForbiddenException extends ApiException
 {
-
     protected $status = HTTP_CODE_403_FORBIDDEN;
 
     /**
      * UnauthorizedException constructor.
+     *
      * @param int $code
+     *
      * @internal param bool $isRefreshTokenExpired
      */
     public function __construct(int $code = 0)
@@ -26,5 +27,4 @@ class ApiForbiddenException extends ApiException
 
         $this->errorMessage = $message;
     }
-
 }

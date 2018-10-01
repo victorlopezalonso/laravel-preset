@@ -9,13 +9,13 @@ use Illuminate\Queue\SerializesModels;
 
 class VerificationMail extends Mailable
 {
-
     use Queueable, SerializesModels;
 
     private $user;
 
     /**
      * AlertStarted constructor.
+     *
      * @param $user
      */
     public function __construct($user)
@@ -39,6 +39,5 @@ class VerificationMail extends Mailable
         ];
 
         return $this->with($params)->view('mails.verification-mail')->subject($params['subject']);
-
     }
 }

@@ -15,7 +15,6 @@ use App\Http\Requests\ApiRequest;
  */
 class ContactMailRequest extends ApiRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *

@@ -6,7 +6,6 @@ use App\Http\Requests\ApiRequest;
 
 class ConfigUpdateRequest extends ApiRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,5 +25,4 @@ class ConfigUpdateRequest extends ApiRequest
             'deepLinkUrl'      => 'nullable',
         ];
     }
-
 }

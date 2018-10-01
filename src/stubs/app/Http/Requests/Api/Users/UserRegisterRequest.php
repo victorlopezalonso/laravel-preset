@@ -20,7 +20,6 @@ use App\Http\Requests\ApiRequest;
  */
 class UserRegisterRequest extends ApiRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -37,5 +36,4 @@ class UserRegisterRequest extends ApiRequest
             'googleId'    => 'required_if:type,3',
         ];
     }
-
 }

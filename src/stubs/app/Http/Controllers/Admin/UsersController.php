@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exceptions\ApiUnauthorizedException;
+use App\Models\User;
 use App\Http\Controllers\ApiController;
+use App\Exceptions\ApiUnauthorizedException;
 use App\Http\Requests\Admin\Users\CreateUserRequest;
 use App\Http\Requests\Admin\Users\UpdateUserRequest;
 use App\Http\Resources\Admin\Users\UserProfileResource;
-use App\Models\User;
 
 class UsersController extends ApiController
 {
-
     /**
      * @return UserProfileResource
      */
@@ -45,6 +44,7 @@ class UsersController extends ApiController
 
     /**
      * @param User $user
+     *
      * @throws \Exception
      * @throws \Throwable
      */

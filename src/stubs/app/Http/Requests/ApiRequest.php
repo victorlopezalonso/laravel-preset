@@ -6,12 +6,10 @@ use App\Models\Copy;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class ApiRequest
- * @package App\Http\Requests
+ * Class ApiRequest.
  */
 class ApiRequest extends FormRequest
 {
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -23,7 +21,7 @@ class ApiRequest extends FormRequest
     }
 
     /**
-     * Custom messages
+     * Custom messages.
      *
      * @return array
      */
@@ -108,7 +106,7 @@ class ApiRequest extends FormRequest
     }
 
     /**
-     * Add a new input value
+     * Add a new input value.
      *
      * @param $key
      * @param $value
@@ -125,7 +123,7 @@ class ApiRequest extends FormRequest
     }
 
     /**
-     * Replace an input value
+     * Replace an input value.
      *
      * @param $key
      * @param $value
@@ -140,16 +138,17 @@ class ApiRequest extends FormRequest
     }
 
     /**
-     * Return the array with camelcase keys transformed to underscore
+     * Return the array with camelcase keys transformed to underscore.
      *
      * @param array $params
+     *
      * @return array|string
      */
     public function params(...$params)
     {
         $request = $this->validated();
 
-        if ( ! $params) {
+        if (! $params) {
             return camel_to_underscore($request, true);
         }
 
@@ -166,13 +165,13 @@ class ApiRequest extends FormRequest
 
     /**
      * @param $key
+     *
      * @return array|mixed
      */
     public function swgArray($key)
     {
         $request = $this->get($key);
 
-        return is_string($request) ? explode(',', str_replace('"', '', $request)) : $request;
+        return \is_string($request) ? explode(',', str_replace('"', '', $request)) : $request;
     }
-
 }

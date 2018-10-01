@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Classes\Excel;
-use App\Http\Controllers\ApiController;
-use App\Models\Config;
 use App\Models\Copy;
+use App\Classes\Excel;
+use App\Models\Config;
+use App\Http\Controllers\ApiController;
 
 class CopiesController extends ApiController
 {
-
     /**
      * @return \App\Http\Responses\ApiResponse
      */
@@ -17,7 +16,7 @@ class CopiesController extends ApiController
     {
         $languages = Config::languages();
 
-        $copyModel['key']    = '';
+        $copyModel['key'] = '';
         $copyModel['server'] = false;
         foreach ($languages as $language) {
             $copyModel[$language] = '';
@@ -26,7 +25,7 @@ class CopiesController extends ApiController
         $response = [
             'copies'    => Copy::orderBy('server', 'desc')->orderBy('key', 'asc')->get(),
             'languages' => $languages,
-            'copyModel' => $copyModel
+            'copyModel' => $copyModel,
         ];
 
         return $this->response($response);
@@ -34,6 +33,7 @@ class CopiesController extends ApiController
 
     /**
      * @param Copy $copy
+     *
      * @return Copy
      */
     public function update(Copy $copy)
@@ -49,8 +49,8 @@ class CopiesController extends ApiController
      */
     public function create()
     {
-        $request           = request()->only(Config::languages());
-        $request['key']    = request('key');
+        $request = request()->only(Config::languages());
+        $request['key'] = request('key');
         $request['server'] = request('server');
 
         return Copy::create($request);
@@ -58,6 +58,7 @@ class CopiesController extends ApiController
 
     /**
      * @param Copy $copy
+     *
      * @throws \Exception
      */
     public function delete(Copy $copy)
@@ -66,11 +67,12 @@ class CopiesController extends ApiController
     }
 
     /**
-     * Create or update the database copies using an excel file
+     * Create or update the database copies using an excel file.
      *
-     * @return \App\Http\Responses\ApiResponse
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
+     *
+     * @return \App\Http\Responses\ApiResponse
      */
     public function importFromExcel()
     {
@@ -79,14 +81,13 @@ class CopiesController extends ApiController
         $xls = new Excel(request()->file('copies'));
 
         foreach ($xls->rows() as $row) {
-
             $info = [
                 'key'    => $row->key,
-                'server' => $row->server ?? false
+                'server' => $row->server ?? false,
             ];
 
             foreach ($languages as $language) {
-                $translations[$language] = $row->$language ?? '';
+                $translations[$language] = $row->{$language} ?? '';
             }
 
             Copy::updateOrCreate($info, $translations ?? []);
@@ -96,7 +97,8 @@ class CopiesController extends ApiController
     }
 
     /**
-     * Export the database copies as an excel file and return the file
+     * Export the database copies as an excel file and return the file.
+     *
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
      */

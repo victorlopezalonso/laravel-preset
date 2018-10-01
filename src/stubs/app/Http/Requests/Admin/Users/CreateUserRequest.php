@@ -6,7 +6,6 @@ use App\Http\Requests\ApiRequest;
 
 class CreateUserRequest extends ApiRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -19,8 +18,7 @@ class CreateUserRequest extends ApiRequest
             'email'       => 'email',
             'password'    => 'nullable',
             'permissions' => 'nullable',
-            'isAdmin'     => 'nullable'
+            'isAdmin'     => 'nullable',
         ];
     }
-
 }

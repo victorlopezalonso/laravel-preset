@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\ApiController;
 use App\Models\User;
+use App\Http\Controllers\ApiController;
 
 class StatsController extends ApiController
 {
-
     /**
-     * Return the admin stats
+     * Return the admin stats.
+     *
      * @return \App\Http\Responses\ApiResponse
      */
     public function getStats()
@@ -23,35 +23,36 @@ class StatsController extends ApiController
     }
 
     /**
-     * Users stats by OS
+     * Users stats by OS.
+     *
      * @return array
      */
     protected function statsByOs()
     {
         $androidUsers = User::where('os', ANDROID_OS)->count();
-        $iosUsers     = User::where('os', IOS_OS)->count();
-        $others       = User::whereNull('os')->count();
+        $iosUsers = User::where('os', IOS_OS)->count();
+        $others = User::whereNull('os')->count();
 
         return [
-            'labels' => ["Android", "iOS", "Other OS's"],
-            'values' => [$androidUsers, $iosUsers, $others]
+            'labels' => ['Android', 'iOS', "Other OS's"],
+            'values' => [$androidUsers, $iosUsers, $others],
         ];
     }
 
     /**
-     * Users stats by genders
+     * Users stats by genders.
+     *
      * @return array
      */
     protected function statsByGender()
     {
-        $men    = User::where('gender', USER_MAN_GENDER)->count();
-        $women  = User::where('gender', USER_WOMAN_GENDER)->count();
+        $men = User::where('gender', USER_MAN_GENDER)->count();
+        $women = User::where('gender', USER_WOMAN_GENDER)->count();
         $others = User::whereNull('gender')->count();
 
         return [
-            'labels' => ["Men", "Women", "Not specified"],
-            'values' => [$men, $women, $others]
+            'labels' => ['Men', 'Women', 'Not specified'],
+            'values' => [$men, $women, $others],
         ];
     }
-
 }

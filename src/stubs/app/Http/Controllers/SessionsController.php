@@ -2,39 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Exceptions\ApiException;
 use App\Http\Requests\Api\Users\UserLoginRequest;
-use App\Http\Resources\Api\Users\UserAccessTokenResource;
 use App\Http\Resources\Api\Users\UserProfileResource;
-use App\Models\User;
+use App\Http\Resources\Api\Users\UserAccessTokenResource;
 
 class SessionsController extends ApiController
 {
-
     /**
-     * Login a user
+     * Login a user.
      *
      * @param UserLoginRequest $request
-     * @return \App\Http\Responses\ApiResponse
+     *
      * @throws ApiException
      * @throws \Throwable
+     *
+     * @return \App\Http\Responses\ApiResponse
      */
     public function store(UserLoginRequest $request)
     {
         switch ($request->get('type')) {
-
             case MAIL_USER:
                 $user = User::loginWithEmail($request);
-                break;
 
+                break;
             case FACEBOOK_USER:
                 $user = User::loginWithFacebook($request);
-                break;
 
+                break;
             case GOOGLE_USER:
                 $user = User::loginWithGoogle($request);
-                break;
 
+                break;
             default:
                 throw new ApiException();
         }
@@ -43,14 +43,15 @@ class SessionsController extends ApiController
     }
 
     /**
-     * Update the user access token
+     * Update the user access token.
+     *
+     * @throws \Throwable
      *
      * @return \App\Http\Responses\ApiResponse
-     * @throws \Throwable
      */
     public function update()
     {
-        if ( ! $user = User::byToken()) {
+        if (! $user = User::byToken()) {
             return $this->responseNotFound();
         }
 
@@ -60,11 +61,11 @@ class SessionsController extends ApiController
     }
 
     /**
-     * Logout the auth user and delete the user token
+     * Logout the auth user and delete the user token.
      */
     public function destroy()
     {
-        if ( !$user = User::byToken()) {
+        if (! $user = User::byToken()) {
             return;
         }
 

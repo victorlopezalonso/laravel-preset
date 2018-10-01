@@ -2,13 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\FileIcon;
-use App\Http\Resources\Api\Colors\ColorResource;
-use App\Http\Resources\Api\Files\FileIconResource;
-use App\Http\Resources\Api\Icons\IconResource;
-use App\Models\Color;
-use App\Models\Config;
-use App\Models\Icon;
 use Illuminate\Http\Resources\Json\Resource;
 
 /**
@@ -27,15 +20,16 @@ use Illuminate\Http\Resources\Json\Resource;
  */
 class SplashResource extends Resource
 {
-
     /**
      * Transform the resource into an array.
-     * @param  \Illuminate\Http\Request $request
+     *
+     * @param \Illuminate\Http\Request $request
+     *
      * @return array
      */
     public function toArray($request)
     {
-        /** @var Config $this */
+        // @var Config $this
         return [
             'copiesUpdatedAt' => $this->copiesUpdatedAt(),
             'contactMail'     => $this->contact_mail,
@@ -44,7 +38,7 @@ class SplashResource extends Resource
             'privacyUrl'      => $this->privacy_url,
             'deepLinkUrl'     => $this->deeplink_url,
             'languages'       => $this->localizedLanguages(),
-            'copies'          => $this->localizedCopies()
+            'copies'          => $this->localizedCopies(),
         ];
     }
 }

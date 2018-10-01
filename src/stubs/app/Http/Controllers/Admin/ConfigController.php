@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Copy;
+use App\Models\Config;
 use App\Classes\Console;
 use App\Http\Controllers\ApiController;
-use App\Http\Requests\Admin\Config\ConfigUpdateRequest;
 use App\Http\Resources\Admin\Config\ConfigResource;
-use App\Models\Config;
-use App\Models\Copy;
+use App\Http\Requests\Admin\Config\ConfigUpdateRequest;
 
 class ConfigController extends ApiController
 {
-
     /**
-     * Return the configuration params
+     * Return the configuration params.
+     *
      * @return \App\Http\Responses\ApiResponse
      */
     public function getConfig()
@@ -22,7 +22,8 @@ class ConfigController extends ApiController
     }
 
     /**
-     * Return the app languages
+     * Return the app languages.
+     *
      * @return \App\Http\Responses\ApiResponse
      */
     public function getLanguages()
@@ -31,8 +32,10 @@ class ConfigController extends ApiController
     }
 
     /**
-     * Update the configuration
+     * Update the configuration.
+     *
      * @param ConfigUpdateRequest $request
+     *
      * @return ConfigResource
      */
     public function update(ConfigUpdateRequest $request)
@@ -42,7 +45,7 @@ class ConfigController extends ApiController
 
         // Check if the default languages are in the array
         foreach (API_DEFAULT_LANGUAGES as $defaultLanguage) {
-            if (!in_array($defaultLanguage, $languages, 'key')) {
+            if (! \in_array($defaultLanguage, $languages, 'key')) {
                 array_push($languages, $defaultLanguage);
             }
         }

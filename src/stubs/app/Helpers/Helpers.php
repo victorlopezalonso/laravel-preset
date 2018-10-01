@@ -2,9 +2,11 @@
 
 /**
  * Transforms an array or string to underscore convention
+ *
  * @param array|string $input array or string to convert
  * @param bool $keys convert only keys
  * @return array|string
+ *
  */
 function camel_to_underscore($input, $keys = false)
 {

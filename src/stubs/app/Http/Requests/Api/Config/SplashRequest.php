@@ -9,7 +9,6 @@ use App\Http\Requests\ApiRequest;
  */
 class SplashRequest extends ApiRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *

@@ -2,12 +2,11 @@
 
 namespace App\Http\Requests\Admin\Pushes;
 
-use App\Http\Requests\ApiRequest;
 use App\Models\Config;
+use App\Http\Requests\ApiRequest;
 
 class SendPushRequest extends ApiRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -17,12 +16,12 @@ class SendPushRequest extends ApiRequest
     {
         $rules = [
             'image' => 'nullable|file',
-            'url'   => 'nullable|url'
+            'url'   => 'nullable|url',
         ];
 
         foreach (['title', 'header', 'content'] as $param) {
             foreach (Config::languages() as $language) {
-                $rules[$param . '.' . $language] = 'nullable';
+                $rules[$param.'.'.$language] = 'nullable';
             }
         }
 

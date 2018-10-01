@@ -2,69 +2,70 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\ApiBadRequestException;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Requests\Api\Users\UserSendResetLinkEmailRequest;
-use App\Http\Resources\Api\Users\UserProfileResource;
-use App\Http\Requests\Api\Users\UserRegisterRequest;
-use App\Http\Resources\Api\Users\UserPublicProfileResource;
-use App\Http\Responses\ApiResponse;
 use App\Models\Copy;
 use App\Models\User;
+use App\Http\Responses\ApiResponse;
+use App\Exceptions\ApiBadRequestException;
+use App\Http\Requests\Api\Users\UserRegisterRequest;
+use App\Http\Resources\Api\Users\UserProfileResource;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Resources\Api\Users\UserPublicProfileResource;
+use App\Http\Requests\Api\Users\UserSendResetLinkEmailRequest;
 
 class UsersController extends ApiController
 {
-
     /**
-     * User registration
+     * User registration.
      *
      * @param UserRegisterRequest $request
-     * @return ApiResponse
+     *
      * @throws \Throwable
+     *
+     * @return ApiResponse
      */
     public function register(UserRegisterRequest $request)
     {
         switch ($request->type) {
-
             case MAIL_USER:
                 $user = User::registerWithEmail($request);
-                break;
 
+                break;
             case FACEBOOK_USER:
                 $user = User::registerWithFacebook($request);
-                break;
 
+                break;
             case GOOGLE_USER:
                 $user = User::registerWithGoogle($request);
-                break;
 
+                break;
             default:
                 throw new ApiBadRequestException('SERVER_GENERIC_ERROR');
         }
 
         if (USER_MUST_VERIFY_EMAIL) {
             return $this->responseAccepted(new UserProfileResource($user))
-                        ->withMessage(Copy::server('USER_REGISTER_CONFIRM'));
+                ->withMessage(Copy::server('USER_REGISTER_CONFIRM'));
         }
 
         return $this->responseCreated(new UserProfileResource($user))->withMessage(Copy::server('USER_REGISTER_OK'));
     }
 
     /**
-     * Send a reset password link to the user
+     * Send a reset password link to the user.
      *
      * @param UserSendResetLinkEmailRequest $request
+     *
      * @return ApiResponse
      */
     public function sendResetLinkEmail(UserSendResetLinkEmailRequest $request)
     {
-        (new ForgotPasswordController)->sendResetLinkEmail($request);
+        (new ForgotPasswordController())->sendResetLinkEmail($request);
 
         return $this->withMessage('PASSWORD_RESET_EMAIL_SENT')->withStatus(HTTP_CODE_202_OK_ACCEPTED);
     }
 
     /**
-     * Show a list of users
+     * Show a list of users.
      *
      * @return ApiResponse
      */
@@ -74,9 +75,10 @@ class UsersController extends ApiController
     }
 
     /**
-     * Show user's public profile
+     * Show user's public profile.
      *
      * @param User $user
+     *
      * @return ApiResponse
      */
     public function profile(User $user)
@@ -85,9 +87,12 @@ class UsersController extends ApiController
     }
 
     /**
-     * Mail verification result view
+     * Mail verification result view.
      *
      * @param $token
+     *
+     * @throws \Exception
+     *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function verifyMail($token)
@@ -98,5 +103,4 @@ class UsersController extends ApiController
 
         return view('mails.verification-mail-result', compact('message'));
     }
-
 }

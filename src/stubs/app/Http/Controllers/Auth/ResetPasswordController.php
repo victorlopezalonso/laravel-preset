@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Models\Copy;
-use Illuminate\Foundation\Auth\ResetsPasswords;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Foundation\Auth\ResetsPasswords;
 
 class ResetPasswordController extends Controller
 {
-
     /*
     |--------------------------------------------------------------------------
     | Password Reset Controller
@@ -33,8 +32,6 @@ class ResetPasswordController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -42,22 +39,7 @@ class ResetPasswordController extends Controller
     }
 
     /**
-     * Reset the given user's password.
-     *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword $user
-     * @param  string $password
-     */
-    protected function resetPassword($user, $password)
-    {
-        $password = encryptWithAppSecret($password);
-
-        $user->password = Hash::make($password);
-        $user->setRememberToken(Str::random(60));
-        $user->save();
-    }
-
-    /**
-     * Return a view to inform the user that the password has been reset
+     * Return a view to inform the user that the password has been reset.
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
@@ -70,4 +52,18 @@ class ResetPasswordController extends Controller
         return view('auth.passwords.reset-ok')->with(compact('message'));
     }
 
+    /**
+     * Reset the given user's password.
+     *
+     * @param \Illuminate\Contracts\Auth\CanResetPassword $user
+     * @param string                                      $password
+     */
+    protected function resetPassword($user, $password)
+    {
+        $password = encryptWithAppSecret($password);
+
+        $user->password = Hash::make($password);
+        $user->setRememberToken(Str::random(60));
+        $user->save();
+    }
 }

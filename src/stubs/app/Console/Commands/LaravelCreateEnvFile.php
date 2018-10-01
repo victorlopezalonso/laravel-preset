@@ -2,12 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use Illuminate\Console\Command;
 
 class LaravelCreateEnvFile extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -24,8 +22,6 @@ class LaravelCreateEnvFile extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
