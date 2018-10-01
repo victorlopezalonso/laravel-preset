@@ -9,7 +9,7 @@
 
                 <a class="navbar-item">
                     <!--<span class="icon"><i class="fas fa-user-secret fa-2x"></i></span>-->
-                    <img src="../../../images/logo.png" class="logo">
+                    <img src="../../../images/logo-dark.png" class="logo">
                 </a>
                 <div :class="hamburguerClass" @click="toggleHamburguer">
                     <span></span>

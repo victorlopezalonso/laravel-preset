@@ -1,12 +1,17 @@
 @import "variables";
 
-$primary: $turquoise;
+$primary: $quadram-primary;
 
 // Navbar
-$navbar-background-color: $white;
-$navbar-item-active-color: $black;
-$navbar-item-active-background-color: $white-ter;
-$navbar-item-hover-background-color: $white-ter;
+$navbar-background-color: $quadram-dark;
+$navbar-item-active-color: $white-ter;
+$navbar-item-active-background-color: $primary;
+$navbar-item-hover-color: $primary;
+$navbar-item-hover-background-color: $grey-dark;
+$navbar-item-color: $grey-lighter;
+$navbar-dropdown-background-color: $quadram-dark;
+$navbar-dropdown-item-hover-color: $primary;
+$navbar-dropdown-item-hover-background-color: $grey-dark;
 
 // Inputs
 $input-disabled-border-color: $grey-lighter;
