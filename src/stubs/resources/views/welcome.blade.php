@@ -13,7 +13,7 @@
     <!-- Styles -->
     <style>
         html, body {
-            background-color: #fff;
+            background-color: #1F98CE;
             color: #636b6f;
             font-family: 'Raleway', sans-serif;
             font-weight: 100;
@@ -50,7 +50,7 @@
         }
 
         .links > a {
-            color: #636b6f;
+            color: whitesmoke;
             padding: 0 25px;
             font-size: 12px;
             font-weight: 600;
@@ -79,9 +79,9 @@
         @endif
 
         <div class="content">
-            <div class="title m-b-md">
-                {{env('APP_NAME')}}
-            </div>
+            <figure class="image is-128x128">
+                <img src="/images/logo-dark.png" class="logo">
+            </figure>
         </div>
 
         <br>
