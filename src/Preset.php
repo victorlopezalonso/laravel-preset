@@ -100,7 +100,7 @@ class Preset extends LaravelPreset
         $package['scripts'] = [
             'laravel-init' => 'composer install; php artisan laravel:create-env-file; php artisan laravel:init; php artisan laravel:info',
             'test'         => 'vendor/bin/phpunit --filter',
-            'tests'        => 'vendor/bin/phpuni',
+            'tests'        => 'vendor/bin/phpunit',
             'jobs'         => 'php artisan queue:work --tries=3',
         ];
 

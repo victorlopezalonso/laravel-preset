@@ -60,9 +60,8 @@ class SessionsTest extends ApiTestCase
         $this->apiCall('post', 'api/v1/session')->assertStatus(HTTP_CODE_404_NOT_FOUND);
     }
 
-
     /** @test */
-    public function login_with_no_verified_credentials_returns_conflict()
+    public function login_with_not_verified_credentials_returns_conflict()
     {
         $user = factory(User::class)->create(['password' => 'Passwd01']);
 
@@ -158,7 +157,7 @@ class SessionsTest extends ApiTestCase
     }
 
     /** @test */
-    public function an_auth_user_can_update_its_token()
+    public function an_auth_user_can_update_the_token()
     {
         if (!TOKEN_EXPIRES) {
             $this->assertTrue(true);

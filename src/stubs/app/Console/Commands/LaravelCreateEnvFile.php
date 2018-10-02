@@ -33,8 +33,13 @@ class LaravelCreateEnvFile extends Command
      */
     public function handle()
     {
-        copy('.env.example', '.env');
+        if (env('APP_HASH')) {
+            $this->line('using existing .env file');
 
+            return;
+        }
+
+        copy('.env.example', '.env');
         $this->line('.env file successfully created');
     }
 }
