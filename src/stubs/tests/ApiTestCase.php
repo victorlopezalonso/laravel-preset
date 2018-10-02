@@ -4,15 +4,24 @@ namespace Tests;
 
 use App\Models\Copy;
 use App\Models\User;
-use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Foundation\Testing\TestResponse;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
-class ApiTestCase extends TestCase
+/**
+ * @internal
+ * @coversNothing
+ */
+final class ApiTestCase extends TestCase
 {
-
     use DatabaseTransactions;
+
+    //Terminal colors
+    const CLEAR = "\e[0m";
+    const WARNING = "\e[41;97m";
+    const CAUTION = "\e[43;30m";
+    const OK = "\e[42;30m";
 
     protected $preserveGlobalState = false;
     protected $runTestInSeparateProcess = true;
@@ -31,17 +40,10 @@ class ApiTestCase extends TestCase
     /** @var User */
     protected $user;
 
-    //Terminal colors
-    const CLEAR = "\e[0m";
-    const WARNING = "\e[41;97m";
-    const CAUTION = "\e[43;30m";
-    const OK = "\e[42;30m";
-
-
     /**
-     * Init config
+     * Init config.
      */
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
         $this->initHeaders();
@@ -49,7 +51,7 @@ class ApiTestCase extends TestCase
     }
 
     /**
-     * Empty the api call headers
+     * Empty the api call headers.
      */
     public function emptyHeaders()
     {
@@ -58,31 +60,34 @@ class ApiTestCase extends TestCase
     }
 
     /**
-     * Default api call headers
+     * Default api call headers.
      */
     public function initHeaders()
     {
         $this->emptyHeaders();
         $this->setHeader('Accept', 'application/json');
         $this->setHeader(API_KEY_HEADER, env('APP_KEY'));
-        $this->setHeader(OS_HEADER,'Android');
-        $this->setHeader(APP_VERSION_HEADER,'1.0.0');
+        $this->setHeader(OS_HEADER, 'Android');
+        $this->setHeader(APP_VERSION_HEADER, '1.0.0');
     }
 
     /**
-     * Add/update an api call header
+     * Add/update an api call header.
+     *
      * @param $header
      * @param $value
      */
     public function setHeader($header, $value)
     {
-        $this->headers['HTTP_' . $header] = $value;
+        $this->headers['HTTP_'.$header] = $value;
     }
 
     /**
-     * Add/update an api call param
+     * Add/update an api call param.
+     *
      * @param $key
      * @param $value
+     *
      * @return ApiTestCase
      */
     public function setParam($key, $value)
@@ -93,9 +98,11 @@ class ApiTestCase extends TestCase
     }
 
     /**
-     * Set an auth user
+     * Set an auth user.
+     *
      * @param null $user
-     * @return User|mixed
+     *
+     * @return mixed|User
      */
     public function signIn($user = null)
     {
@@ -106,7 +113,8 @@ class ApiTestCase extends TestCase
     }
 
     /**
-     * Auth user
+     * Auth user.
+     *
      * @return User
      */
     public function auth()
@@ -115,7 +123,8 @@ class ApiTestCase extends TestCase
     }
 
     /**
-     * Original response content
+     * Original response content.
+     *
      * @return TestResponse
      */
     public function response()
@@ -135,13 +144,13 @@ class ApiTestCase extends TestCase
     }
 
     /**
-     * Check if the object
+     * Check if the object.
+     *
      * @param array $attributes
      */
     public function assertDataHasAttributes(array $attributes)
     {
-        if (is_array($this->response['data'])) {
-
+        if (\is_array($this->response['data'])) {
             foreach ($this->response['data'] as $object) {
                 $this->assertObjectHasAttributes($attributes, $object);
             }
@@ -153,27 +162,27 @@ class ApiTestCase extends TestCase
     }
 
     /**
-     * Comprueba que el campo data de la respuesta devuelva un null
+     * Comprueba que el campo data de la respuesta devuelva un null.
      */
     public function assertResponseDataIsNull()
     {
-        $this->assertEquals(null, $this->response['data']);
+        $this->assertNull($this->response['data']);
 
         return $this;
     }
 
     /**
-     * Comprueba que el campo data de la respuesta devuelva un null
+     * Comprueba que el campo data de la respuesta devuelva un null.
      */
     public function assertResponseDataIsNotNull()
     {
-        $this->assertNotEquals(null, $this->response['data']);
+        $this->assertNotNull($this->response['data']);
 
         return $this;
     }
 
     /**
-     * Comprueba que el campo data de la respuesta devuelva un null
+     * Comprueba que el campo data de la respuesta devuelva un null.
      */
     public function assertResponseDataIsAnArray()
     {
@@ -184,11 +193,12 @@ class ApiTestCase extends TestCase
 
     /**
      * @param $key
+     *
      * @return ApiTestCase
      */
     public function assertMessage($key)
     {
-        $this->assertEquals(Copy::server($key), $this->response['message'] ?? null);
+        $this->assertSame(Copy::server($key), $this->response['message'] ?? null);
 
         return $this;
     }
@@ -205,46 +215,52 @@ class ApiTestCase extends TestCase
 
     /**
      * @param $count
+     *
      * @return $this
      */
     public function assertEmailsWereSent($count)
     {
-        $this->assertCount($count, $this->emails, "Faled asserting that $count email(s) was sent");
+        $this->assertCount($count, $this->emails, "Faled asserting that ${count} email(s) was sent");
 
         return $this;
     }
 
     /**
      * @param $recipient
-     * @return $this
+     *
      * @throws \Exception
+     *
+     * @return $this
      */
     public function assertSeeMailTo($recipient)
     {
-        if(!$email = end($this->emails)){
-            throw new \Exception("No email was sent to $recipient");
+        if (! $email = end($this->emails)) {
+            throw new \Exception("No email was sent to ${recipient}");
         }
 
-        $this->assertArrayHasKey($recipient, $email->getTo(), "No email was sent to $recipient");
+        $this->assertArrayHasKey($recipient, $email->getTo(), "No email was sent to ${recipient}");
 
         return $this;
     }
 
     /**
-     * Añade un archivo a la llamada
+     * Añade un archivo a la llamada.
+     *
      * @param $path
      */
     public function attachFile($path)
     {
-        $fileName                                = basename($path);
-        $fileNameWithoutExtension                = pathinfo($path, PATHINFO_FILENAME);
+        $fileName = basename($path);
+        $fileNameWithoutExtension = pathinfo($path, PATHINFO_FILENAME);
         $this->params[$fileNameWithoutExtension] = new UploadedFile($path, $fileName, null, null, null, true);
     }
 
     /**
-     * Realiza una llamada a un servicio del api
+     * Realiza una llamada a un servicio del api.
+     *
      * @param string $method
      * @param string $uri
+     *
      * @return TestResponse
      */
     public function apiCall(string $method, string $uri)
@@ -252,33 +268,35 @@ class ApiTestCase extends TestCase
         $this->testResponse = $this->json($method, $uri, $this->params, $this->headers);
 
         $this->response = $this->testResponse->getOriginalContent();
-        $this->data     = $this->response['data'] ?? null;
+        $this->data = $this->response['data'] ?? null;
 
         return $this->testResponse;
     }
 
     /**
-     * Muestra los logs en los test
+     * Muestra los logs en los test.
      */
     public function showResponse()
     {
-        $this->info("HEADERS: " . json_encode($this->headers));
-        $this->info("PARAMS: " . json_encode($this->params));
-        $this->caution("RESPONSE: " . json_encode($this->response));
+        $this->info('HEADERS: '.json_encode($this->headers));
+        $this->info('PARAMS: '.json_encode($this->params));
+        $this->caution('RESPONSE: '.json_encode($this->response));
     }
 
     /**
-     * Muestra un mensaje de color en la consola
+     * Muestra un mensaje de color en la consola.
+     *
      * @param string $color
      * @param $text
      */
     public function consoleLog(string $color, $text)
     {
-        echo PHP_EOL . $color . $text . self::CLEAR . PHP_EOL;
+        echo PHP_EOL.$color.$text.self::CLEAR.PHP_EOL;
     }
 
     /**
-     * Mensaje de color rojo
+     * Mensaje de color rojo.
+     *
      * @param $text
      */
     public function warning($text)
@@ -287,7 +305,8 @@ class ApiTestCase extends TestCase
     }
 
     /**
-     * Mensaje de color naranja
+     * Mensaje de color naranja.
+     *
      * @param $text
      */
     public function caution($text)
@@ -296,7 +315,8 @@ class ApiTestCase extends TestCase
     }
 
     /**
-     * Mensaje de color verde
+     * Mensaje de color verde.
+     *
      * @param $text
      */
     public function ok($text)
@@ -305,7 +325,8 @@ class ApiTestCase extends TestCase
     }
 
     /**
-     * Mensaje sin color
+     * Mensaje sin color.
+     *
      * @param $text
      */
     public function info($text)
@@ -317,12 +338,10 @@ class ApiTestCase extends TestCase
     {
         $this->emails[] = $email;
     }
-
 }
 
 class TestingMailEventListener implements \Swift_Events_EventListener
 {
-
     /** @var ApiTestCase */
     protected $test;
 

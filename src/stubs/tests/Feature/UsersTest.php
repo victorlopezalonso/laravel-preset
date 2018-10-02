@@ -2,10 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use App\Models\Config;
 use App\Models\Folder;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Tests\ApiTestCase;
 
 class UsersTest extends ApiTestCase
@@ -128,16 +127,14 @@ class UsersTest extends ApiTestCase
              ->assertSee('name')
              ->assertSee('lastname')
              ->assertSee('photo');
-
     }
 
     /**
      * @test
      * @throws \Exception
      */
-    public function user_receives_a_mail_to_reset_its_password()
+    public function user_receives_a_mail_to_reset_the_password()
     {
-
         $user = factory(User::class)->create();
 
         $this->params = ['email' => $user->email];

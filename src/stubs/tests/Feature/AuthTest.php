@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Http\UploadedFile;
 use Tests\ApiTestCase;
+use Illuminate\Http\UploadedFile;
 
 class AuthTest extends ApiTestCase
 {
@@ -84,10 +84,12 @@ class AuthTest extends ApiTestCase
         $this->signIn(factory(User::class)->create());
 
         $this->apiCall('delete', 'api/v1/auth')->assertStatus(HTTP_CODE_200_OK);
+
+        $this->assertNull(User::find($this->user->id));
     }
 
     /** @test */
-    public function a_user_can_update_its_push_token()
+    public function a_user_can_update_the_push_token()
     {
         /** @var User $user */
         $user = factory(User::class)->create();
@@ -99,9 +101,7 @@ class AuthTest extends ApiTestCase
         //************************************
         $this->params = ['token' => 'token1'];
 
-        $this->apiCall('post', 'api/v1/auth/pushtoken');
-        $this->showResponse();
-        //$this->apiCall('post', 'api/v1/auth/pushtoken')->assertStatus(HTTP_CODE_201_OK_CREATED);
+        $this->apiCall('post', 'api/v1/auth/pushtoken')->assertStatus(HTTP_CODE_201_OK_CREATED);
 
         self::assertEquals(1, $user->pushTokens()->count());
 

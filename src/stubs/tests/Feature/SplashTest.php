@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\Config;
 use Carbon\Carbon;
+use App\Models\Config;
 use Tests\ApiTestCase;
 
 class SplashTest extends ApiTestCase

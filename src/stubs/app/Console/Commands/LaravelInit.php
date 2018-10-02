@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use App\Classes\Console;
 use Laravel\Passport\Client;
 use Illuminate\Console\Command;
@@ -21,7 +20,7 @@ class LaravelInit extends Command
      *
      * @var string
      */
-    protected $description = 'Install or update the project';
+    protected $description = 'Install the project';
 
     /**
      * Execute the console command.
@@ -30,7 +29,9 @@ class LaravelInit extends Command
      */
     public function handle()
     {
-        $this->welcome();
+        if (! $this->welcome()) {
+            return;
+        }
 
         $this->generateAppKey();
 
@@ -51,7 +52,15 @@ class LaravelInit extends Command
     protected function welcome()
     {
         system('clear');
-        $this->comment('Attempting to install the project.');
+        $this->error('This process will delete any existing configuration');
+
+        if (! $this->confirm('Are you sure?')) {
+            return false;
+        }
+
+        $this->comment('Attempting to install the project...');
+
+        return true;
     }
 
     /**
@@ -71,6 +80,88 @@ class LaravelInit extends Command
             $hash = base64_encode(random_bytes(10));
             Console::updateEnvironmentFile(['APP_HASH' => $hash]);
         }
+    }
+
+    /**
+     * Set the database configuration and updates the .env file.
+     */
+    protected function askForConfiguration()
+    {
+        $config = [];
+
+        do {
+            $this->info('Database configuration.');
+
+            $config['APP_ENV'] = $this->choice('Environment', [
+                LOCAL_ENVIRONMENT       => LOCAL_ENVIRONMENT,
+                DEVELOPMENT_ENVIRONMENT => DEVELOPMENT_ENVIRONMENT,
+                STAGING_ENVIRONMENT     => STAGING_ENVIRONMENT,
+                PRODUCTION_ENVIRONMENT  => PRODUCTION_ENVIRONMENT,
+            ], LOCAL_ENVIRONMENT);
+
+            $config['APP_DEBUG'] = PRODUCTION_ENVIRONMENT !== $config['APP_ENV'];
+
+            $config['APP_NAME'] = '"'.$this->ask('Name of the app').'"';
+            $config['APP_URL'] = $this->ask('Public url');
+
+            $config['DB_CONNECTION'] = $this->choice('Database driver', [
+                'mysql'      => 'MySQL/MariaDB',
+                'pgsql'      => 'PostgreSQL',
+                'sqlsrv'     => 'SQL Server',
+                'sqlite-e2e' => 'SQLite',
+            ], 'mysql');
+
+            if ('sqlite-e2e' === $config['DB_CONNECTION']) {
+                $config['DB_DATABASE'] = $this->ask('Absolute path to the DB file');
+            } else {
+                $config['DB_HOST'] = $this->ask('DB host', 'localhost');
+                $config['DB_PORT'] = $this->ask('DB port', '3306');
+                $config['DB_DATABASE'] = $this->ask('DB name');
+                $config['DB_USERNAME'] = $this->ask('DB user', 'root');
+                $config['DB_PASSWORD'] = (string) $this->secret('DB password', false);
+            }
+
+            $config['MAIL_FROM_NAME'] = (string) $this->ask('Mail from name', $config['APP_NAME']);
+            $config['MAIL_FROM_ADDRESS'] = $this->ask('Mail from address');
+            $config['MAIL_DRIVER'] = $this->ask('Mail driver', 'smtp');
+            $config['MAIL_HOST'] = $this->ask('Mail host', 'smtp.mailtrap.io');
+            $config['MAIL_PORT'] = $this->ask('Mail port', '2525');
+            $config['MAIL_ENCRYPTION'] = $this->choice('Mail encryption', [
+                'ssl',
+                'tls',
+                'null',
+            ], 'ssl');
+
+            $config['MAIL_USERNAME'] = (string) $this->ask('Mail username');
+            $config['MAIL_PASSWORD'] = (string) $this->secret('Mail password', false);
+
+            $config['DEPLOY_MODE'] = (PRODUCTION_ENVIRONMENT === $config['APP_ENV']) ? WEBHOOK_DEPLOY : AUTO_DEPLOY;
+
+            $this->table(array_keys($config), [$config]);
+        } while (! $this->confirm('Proceed with this configuration?'));
+
+        //Set the config so that the next DB attempt uses refreshed credentials
+        config([
+            'database.default'                                         => $config['DB_CONNECTION'],
+            "database.connections.{$config['DB_CONNECTION']}.host"     => $config['DB_HOST'],
+            "database.connections.{$config['DB_CONNECTION']}.port"     => $config['DB_PORT'],
+            "database.connections.{$config['DB_CONNECTION']}.database" => $config['DB_DATABASE'],
+            "database.connections.{$config['DB_CONNECTION']}.username" => $config['DB_USERNAME'],
+            "database.connections.{$config['DB_CONNECTION']}.password" => $config['DB_PASSWORD'],
+        ]);
+
+        Console::updateEnvironmentFile($config);
+
+        $this->info('Migrating database');
+        $this->call('migrate:fresh', ['--force' => true]);
+
+        $this->info('Seeding initial data');
+        $this->call('db:seed', ['--force' => true]);
+
+        $this->info('Enter your admin password to set the storage folder permissions and supervisor configuration');
+        Console::exec('sudo chmod -R 775 storage');
+
+        $this->configureSupervisor();
     }
 
     /**
@@ -120,12 +211,11 @@ class LaravelInit extends Command
     }
 
     /**
-     * Run the migrations.
+     * Set up the admin account.
      */
-    protected function migrate()
+    protected function setUpAdminAccount()
     {
-        $this->info('Migrating database');
-        $this->call('migrate', ['--force' => true]);
+        $this->call('laravel:create-admin-user');
     }
 
     /**
@@ -137,134 +227,34 @@ class LaravelInit extends Command
     }
 
     /**
+     * Install passport.
+     */
+    protected function initPassport()
+    {
+        $this->call('passport:keys', ['--force' => true]);
+        $this->call('passport:install', ['--force' => true]);
+
+        //Password client for expiring tokens
+        $client = Client::where('password_client', true)->first();
+
+        Console::setEnvironmentValue('OAUTH_EXPIRING_CLIENT_ID', $client->id);
+        Console::setEnvironmentValue('OAUTH_EXPIRING_CLIENT_SECRET', $client->secret);
+
+        //personal client for no expiring tokens
+        $client = Client::where('password_client', false)->first();
+
+        Console::setEnvironmentValue('OAUTH_NO_EXPIRING_CLIENT_ID', $client->id);
+        Console::setEnvironmentValue('OAUTH_NO_EXPIRING_CLIENT_SECRET', $client->secret);
+
+        $this->info('.env file updated with oauth client credentials');
+    }
+
+    /**
      * Compile the front end files.
      */
     protected function compileFrontEnd()
     {
         $this->info('Compiling front-end stuff');
         system('yarn install');
-    }
-
-    /**
-     * Ask the user for the DB configuration and updates the .env file.
-     */
-    private function askForConfiguration()
-    {
-        if (env('APP_ENV')) {
-            $this->migrate();
-
-            return;
-        }
-
-        $config = [];
-
-        do {
-            system('clear');
-            $this->info('Database configuration.');
-
-            $config['APP_ENV'] = $this->choice('Environment', [
-                LOCAL_ENVIRONMENT       => LOCAL_ENVIRONMENT,
-                DEVELOPMENT_ENVIRONMENT => DEVELOPMENT_ENVIRONMENT,
-                STAGING_ENVIRONMENT     => STAGING_ENVIRONMENT,
-                PRODUCTION_ENVIRONMENT  => PRODUCTION_ENVIRONMENT,
-            ], LOCAL_ENVIRONMENT);
-
-            $config['APP_DEBUG'] = PRODUCTION_ENVIRONMENT !== $config['APP_ENV'];
-
-            $config['APP_NAME'] = '"'.$this->ask('Name of the app').'"';
-            $config['APP_URL'] = $this->ask('Public url');
-
-            $config['DB_CONNECTION'] = $this->choice('Database driver', [
-                'mysql'      => 'MySQL/MariaDB',
-                'pgsql'      => 'PostgreSQL',
-                'sqlsrv'     => 'SQL Server',
-                'sqlite-e2e' => 'SQLite',
-            ], 'mysql');
-
-            if ('sqlite-e2e' === $config['DB_CONNECTION']) {
-                $config['DB_DATABASE'] = $this->ask('Absolute path to the DB file');
-            } else {
-                $config['DB_HOST'] = $this->ask('DB host', 'localhost');
-                $config['DB_PORT'] = $this->ask('DB port', '3306');
-                $config['DB_DATABASE'] = $this->ask('DB name');
-                $config['DB_USERNAME'] = $this->ask('DB user', 'root');
-                $config['DB_PASSWORD'] = (string) $this->secret('DB password', false);
-            }
-
-            $config['MAIL_FROM_NAME'] = (string) $this->ask('Mail from name', $config['APP_NAME']);
-            $config['MAIL_FROM_ADDRESS'] = $this->ask('Mail from address');
-            $config['MAIL_DRIVER'] = $this->ask('Mail driver', 'smtp');
-            $config['MAIL_HOST'] = $this->ask('Mail host', 'smtp.mailtrap.io');
-            $config['MAIL_PORT'] = $this->ask('Mail port', '2525');
-            $config['MAIL_ENCRYPTION'] = $this->choice('Mail encryption', [
-                'ssl'           => 'ssl',
-                'tls'           => 'tls',
-                'no encryption' => null,
-            ], 'ssl');
-
-            $config['MAIL_USERNAME'] = (string) $this->ask('Mail username');
-            $config['MAIL_PASSWORD'] = (string) $this->secret('Mail password', false);
-
-            $config['DEPLOY_MODE'] = (PRODUCTION_ENVIRONMENT === $config['APP_ENV']) ? WEBHOOK_DEPLOY : AUTO_DEPLOY;
-
-            $this->table(array_keys($config), [$config]);
-        } while (! $this->confirm('Proceed with this configuration?'));
-
-        //Set the config so that the next DB attempt uses refreshed credentials
-        config([
-            'database.default'                                         => $config['DB_CONNECTION'],
-            "database.connections.{$config['DB_CONNECTION']}.host"     => $config['DB_HOST'],
-            "database.connections.{$config['DB_CONNECTION']}.port"     => $config['DB_PORT'],
-            "database.connections.{$config['DB_CONNECTION']}.database" => $config['DB_DATABASE'],
-            "database.connections.{$config['DB_CONNECTION']}.username" => $config['DB_USERNAME'],
-            "database.connections.{$config['DB_CONNECTION']}.password" => $config['DB_PASSWORD'],
-        ]);
-
-        Console::updateEnvironmentFile($config);
-
-        $this->migrate();
-
-        $this->info('Seeding initial data');
-        $this->call('db:seed', ['--force' => true]);
-
-        $this->info('Enter your admin password to set the storage folder permissions and supervisor configuration');
-        Console::exec('sudo chmod -R 775 storage');
-
-        $this->configureSupervisor();
-    }
-
-    /**
-     * Set up the admin account.
-     */
-    private function setUpAdminAccount()
-    {
-        if (! User::count()) {
-            $this->call('laravel:create-admin-user');
-        }
-    }
-
-    /**
-     * Install passport.
-     */
-    private function initPassport()
-    {
-        if (! env('OAUTH_EXPIRING_CLIENT_ID') || ! env('OAUTH_EXPIRING_CLIENT_SECRET')) {
-            $this->call('passport:keys', ['--force' => true]);
-            $this->call('passport:install', ['--force' => true]);
-
-            //Password client for expiring tokens
-            $client = Client::where('password_client', true)->first();
-
-            Console::setEnvironmentValue('OAUTH_EXPIRING_CLIENT_ID', $client->id);
-            Console::setEnvironmentValue('OAUTH_EXPIRING_CLIENT_SECRET', $client->secret);
-
-            //personal client for no expiring tokens
-            $client = Client::where('password_client', false)->first();
-
-            Console::setEnvironmentValue('OAUTH_NO_EXPIRING_CLIENT_ID', $client->id);
-            Console::setEnvironmentValue('OAUTH_NO_EXPIRING_CLIENT_SECRET', $client->secret);
-
-            $this->info('.env file updated with oauth client credentials');
-        }
     }
 }
