@@ -3,19 +3,18 @@
 namespace App\Http\Requests;
 
 use App\Models\Config;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Validation\Rule;
 
 /**
- * Class Headers
- * @package App\Http\Requests
+ * Class Headers.
  */
 class Headers
 {
-
     /**
-     * Return the headers sent to the service as an array
+     * Return the headers sent to the service as an array.
+     *
      * @return array
      */
     public static function asArray()
@@ -24,12 +23,13 @@ class Headers
             API_KEY_HEADER     => self::getApiKey(),
             LANGUAGE_HEADER    => self::getLanguage(),
             OS_HEADER          => self::getOs(),
-            APP_VERSION_HEADER => self::getAppVersion()
+            APP_VERSION_HEADER => self::getAppVersion(),
         ];
     }
 
     /**
-     * Return the apikey header param
+     * Return the apikey header param.
+     *
      * @return string
      */
     public static function getApiKey()
@@ -38,14 +38,15 @@ class Headers
     }
 
     /**
-     * Return the language header param
+     * Return the language header param.
+     *
      * @return string
      */
     public static function getLanguage()
     {
         $language = request()->header(LANGUAGE_HEADER);
 
-        if ( ! $language || ! in_array($language, Config::languages())) {
+        if (! $language || ! \in_array($language, Config::languages(), true)) {
             return API_DEFAULT_LANGUAGE;
         }
 
@@ -53,7 +54,8 @@ class Headers
     }
 
     /**
-     * Return the appVersion header param
+     * Return the appVersion header param.
+     *
      * @return string
      */
     public static function getAppVersion()
@@ -62,7 +64,8 @@ class Headers
     }
 
     /**
-     * Return the os header param
+     * Return the os header param.
+     *
      * @return string
      */
     public static function getOs()
@@ -71,32 +74,36 @@ class Headers
     }
 
     /**
-     * Check if the os is Android
+     * Check if the os is Android.
+     *
      * @return bool
      */
     public static function isAndroid()
     {
-        return request()->header(OS_HEADER) === ANDROID_OS_DESCRIPTION;
+        return ANDROID_OS_DESCRIPTION === request()->header(OS_HEADER);
     }
 
     /**
-     * Check if the os is iOS
+     * Check if the os is iOS.
+     *
      * @return bool
      */
     public static function isIos()
     {
-        return request()->header(OS_HEADER) === IOS_OS_DESCRIPTION;
+        return IOS_OS_DESCRIPTION === request()->header(OS_HEADER);
     }
 
     /**
-     * Return the os param as an integer
-     * @return int|null
+     * Return the os param as an integer.
+     *
+     * @return null|int
      */
     public static function getOsAsInteger()
     {
         if (self::isAndroid()) {
             return ANDROID_OS;
-        } elseif (self::isIos()) {
+        }
+        if (self::isIos()) {
             return IOS_OS;
         }
 
@@ -104,12 +111,13 @@ class Headers
     }
 
     /**
-     * Check the required headers
+     * Check the required headers.
+     *
      * @throws \Throwable
      */
     public static function checkHeaders()
     {
-        if ( ! CHECK_HEADERS_MIDDLEWARE) {
+        if (! CHECK_HEADERS_MIDDLEWARE) {
             return;
         }
 
@@ -123,6 +131,4 @@ class Headers
             throw new ValidationException($validator);
         }
     }
-
-
 }

@@ -6,12 +6,13 @@ use App\Models\Copy;
 
 class ApiUnauthorizedException extends ApiException
 {
-
     protected $status = HTTP_CODE_401_UNAUTHORIZED;
 
     /**
      * UnauthorizedException constructor.
+     *
      * @param int $code
+     *
      * @internal param bool $isRefreshTokenExpired
      */
     public function __construct(int $code = 0)
@@ -26,5 +27,4 @@ class ApiUnauthorizedException extends ApiException
 
         $this->errorMessage = $message;
     }
-
 }

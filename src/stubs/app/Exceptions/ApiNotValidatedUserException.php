@@ -6,12 +6,13 @@ use App\Models\Copy;
 
 class ApiNotValidatedUserException extends ApiException
 {
-
     protected $status = HTTP_CODE_409_CONFLICT;
 
     /**
      * UnauthorizedException constructor.
+     *
      * @param int $code
+     *
      * @internal param bool $isRefreshTokenExpired
      */
     public function __construct(int $code = 0)
@@ -24,5 +25,4 @@ class ApiNotValidatedUserException extends ApiException
 
         $this->errorMessage = $this->message;
     }
-
 }

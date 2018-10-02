@@ -20,7 +20,6 @@ use App\Http\Requests\ApiRequest;
  */
 class UserLoginRequest extends ApiRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -38,5 +37,4 @@ class UserLoginRequest extends ApiRequest
             'photo'       => 'nullable',
         ];
     }
-
 }

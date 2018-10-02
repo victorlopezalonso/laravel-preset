@@ -2,19 +2,19 @@
 
 namespace App\Models;
 
-use App\Http\Requests\Headers;
 use Carbon\Carbon;
+use App\Http\Requests\Headers;
 
 class Config extends ApiModel
 {
-
     protected $casts = [
         'app_in_maintenance' => 'boolean',
         'languages'          => 'array',
     ];
 
     /**
-     * App in maintenance as boolean
+     * App in maintenance as boolean.
+     *
      * @return bool
      */
     public function appIsInMaintenance()
@@ -23,16 +23,18 @@ class Config extends ApiModel
     }
 
     /**
-     * Return the languages as an array
+     * Return the languages as an array.
+     *
      * @return array
      */
     public static function languages()
     {
-        return Config::first()->languages;
+        return self::first()->languages;
     }
 
     /**
-     * Return the last timestamp when the copies were updated
+     * Return the last timestamp when the copies were updated.
+     *
      * @return string
      */
     public function copiesUpdatedAt()
@@ -41,7 +43,8 @@ class Config extends ApiModel
     }
 
     /**
-     * Return if the version passed as header is outdated
+     * Return if the version passed as header is outdated.
+     *
      * @return bool
      */
     public function appVersionIsOutdated()
@@ -54,12 +57,13 @@ class Config extends ApiModel
             $appVersion = $this->ios_version;
         }
 
-        return version_compare(Headers::getAppVersion(), $appVersion) == -1 ? true : false;
+        return -1 === version_compare(Headers::getAppVersion(), $appVersion) ? true : false;
     }
 
     /**
-     * Return all the client localized copies
-     * @return Copy[]|null
+     * Return all the client localized copies.
+     *
+     * @return null|Copy[]
      */
     public function localizedCopies()
     {
@@ -67,7 +71,7 @@ class Config extends ApiModel
             return null;
         }
 
-        if ( ! request('copiesUpdatedAt')) {
+        if (! request('copiesUpdatedAt')) {
             return Copy::clientTranslations();
         }
 
@@ -77,7 +81,8 @@ class Config extends ApiModel
     }
 
     /**
-     * Return the localized languages of the app as an array with the format key => value
+     * Return the localized languages of the app as an array with the format key => value.
+     *
      * @return array
      */
     public function localizedLanguages()
@@ -90,7 +95,8 @@ class Config extends ApiModel
     }
 
     /**
-     * Return a list of localized languages as an array with the structure for a multi-check vue component
+     * Return a list of localized languages as an array with the structure for a multi-check vue component.
+     *
      * @return array
      */
     public static function languagesForAdmin()
@@ -103,7 +109,7 @@ class Config extends ApiModel
             $localized[] = [
                 'key'     => $key,
                 'value'   => $copies[$value] ?? $value,
-                'checked' => in_array($key, $languages)
+                'checked' => \in_array($key, $languages, true),
             ];
         }
 

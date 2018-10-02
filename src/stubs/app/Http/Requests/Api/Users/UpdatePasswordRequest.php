@@ -14,7 +14,6 @@ use App\Http\Requests\ApiRequest;
  */
 class UpdatePasswordRequest extends ApiRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -26,5 +25,4 @@ class UpdatePasswordRequest extends ApiRequest
             'password' => 'required|min:3',
         ];
     }
-
 }

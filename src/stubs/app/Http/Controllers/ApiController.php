@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use finfo;
-use Illuminate\Support\Facades\Response;
-use App\Http\Responses\ApiResponse;
-use App\Helpers\StorageHelper;
 use App\Models\Copy;
 use App\Models\User;
+use App\Helpers\StorageHelper;
+use App\Http\Responses\ApiResponse;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 
 class ApiController extends Controller
 {
-
     /** @var ApiResponse JSON basic response */
     private $response;
 
@@ -32,9 +32,11 @@ class ApiController extends Controller
     }
 
     /**
-     * Set the ApiResponse object message
+     * Set the ApiResponse object message.
+     *
      * @param $message
      * @param bool $isCopy
+     *
      * @return ApiResponse
      */
     public function withMessage($message, bool $isCopy = true)
@@ -45,9 +47,10 @@ class ApiController extends Controller
     }
 
     /**
-     * Set the status property of the ApiResponse
+     * Set the status property of the ApiResponse.
      *
-     * @param integer $status
+     * @param int $status
+     *
      * @return ApiResponse
      */
     public function withStatus($status)
@@ -56,8 +59,10 @@ class ApiController extends Controller
     }
 
     /**
-     * Create a response with a 201 HTTP status
+     * Create a response with a 201 HTTP status.
+     *
      * @param null $data
+     *
      * @return ApiResponse
      */
     public function responseCreated($data = null)
@@ -66,8 +71,10 @@ class ApiController extends Controller
     }
 
     /**
-     * Create a response with a 202 HTTP status
+     * Create a response with a 202 HTTP status.
+     *
      * @param null $data
+     *
      * @return ApiResponse
      */
     public function responseAccepted($data = null)
@@ -76,8 +83,10 @@ class ApiController extends Controller
     }
 
     /**
-     * Create a response with a 404 HTTP status
+     * Create a response with a 404 HTTP status.
+     *
      * @param string $message
+     *
      * @return ApiResponse
      */
     public function responseNotFound($message = null)
@@ -88,8 +97,10 @@ class ApiController extends Controller
     }
 
     /**
-     * Create a response with a 409 HTTP status
+     * Create a response with a 409 HTTP status.
+     *
      * @param string $message
+     *
      * @return ApiResponse
      */
     public function responseWithConflict($message = null)
@@ -100,8 +111,10 @@ class ApiController extends Controller
     }
 
     /**
-     * Devuelve un archivo como respuesta
+     * Devuelve un archivo como respuesta.
+     *
      * @param $filename
+     *
      * @return mixed
      */
     public function responseFile($filename)
@@ -110,14 +123,15 @@ class ApiController extends Controller
 
         return Response::make($file, HTTP_CODE_200_OK, [
             'Content-Type'        => (new finfo(FILEINFO_MIME))->buffer($file),
-            'Content-Disposition' => 'attachment; filename="' . pathinfo($filename, PATHINFO_BASENAME) . '"'
+            'Content-Disposition' => 'attachment; filename="'.pathinfo($filename, PATHINFO_BASENAME).'"',
         ]);
     }
 
     /**
-     * Decrypt a file and return as binary
+     * Decrypt a file and return as binary.
      *
      * @param $filename
+     *
      * @return mixed
      */
     public function responseDecryptFile($filename)
@@ -126,18 +140,19 @@ class ApiController extends Controller
 
         return Response::make($decryptedFile, HTTP_CODE_200_OK, [
             'Content-Type'        => (new finfo(FILEINFO_MIME))->buffer($decryptedFile),
-            'Content-Disposition' => 'attachment; filename="' . pathinfo($filename, PATHINFO_BASENAME) . '"'
+            'Content-Disposition' => 'attachment; filename="'.pathinfo($filename, PATHINFO_BASENAME).'"',
         ]);
     }
 
     /**
-     * Set the data of the response object
+     * Set the data of the response object.
+     *
      * @param $data
+     *
      * @return ApiResponse
      */
     public function response($data = null)
     {
         return $data ? $this->response->withData($data) : $this->response;
     }
-
 }

@@ -16,7 +16,6 @@ use App\Http\Requests\ApiRequest;
  */
 class UserUpdateRequest extends ApiRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -27,8 +26,7 @@ class UserUpdateRequest extends ApiRequest
         return [
             'name'     => 'required',
             'password' => 'nullable',
-            'email'    => 'nullable|email'
+            'email'    => 'nullable|email',
         ];
     }
-
 }

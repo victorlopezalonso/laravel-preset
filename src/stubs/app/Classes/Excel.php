@@ -2,17 +2,19 @@
 
 namespace App\Classes;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\IOFactory as Reader;
 use PhpOffice\PhpSpreadsheet\IOFactory as Writer;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\RowIterator;
 
 /**
- * Class Excel
- * @package App\Classes
+ * Class Excel.
  */
 class Excel
 {
+    /** @var bool Loops through existing cells */
+    const iterateOnlyInExistingCells = true;
+
     /** @var \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet */
     private $xls;
 
@@ -25,12 +27,11 @@ class Excel
     /** @var RowIterator */
     private $rowIterator;
 
-    /** @var bool Loops through existing cells */
-    const iterateOnlyInExistingCells = true;
-
     /**
      * Excel constructor.
+     *
      * @param string $file
+     *
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
      */
@@ -46,30 +47,44 @@ class Excel
     }
 
     /**
-     * Create an Excel file and return a public asset
+     * Create an Excel file and return a public asset.
+     *
      * @param string $fileName
-     * @param array $headers
-     * @param array $rows
-     * @return string
+     * @param array  $headers
+     * @param array  $rows
+     *
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     *
+     * @return string
      */
     public static function createFile(string $fileName, array $headers, array $rows)
     {
-        $filePath = storage_path() . "/app/public/$fileName";
+        $filePath = storage_path()."/app/public/${fileName}";
 
-        /** Create a new Spreadsheet Object **/
+        /** Create a new Spreadsheet Object */
         $spreadsheet = new Spreadsheet();
         $spreadsheet->getActiveSheet()->fromArray(array_merge([$headers], $rows));
 
-        $writer = Writer::createWriter($spreadsheet, "Xlsx");
+        $writer = Writer::createWriter($spreadsheet, 'Xlsx');
         $writer->save($filePath);
 
-        return asset('storage/' . $fileName);
+        return asset('storage/'.$fileName);
     }
 
     /**
-     * Set the keys using the first row of the file
+     * Return the rows array.
+     *
+     * @return array
+     */
+    public function rows()
+    {
+        return $this->rows;
+    }
+
+    /**
+     * Set the keys using the first row of the file.
+     *
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     private function setKeys()
@@ -88,7 +103,8 @@ class Excel
     }
 
     /**
-     * Create an array of objects using headers as keys and colums as values
+     * Create an array of objects using headers as keys and colums as values.
+     *
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
     private function setRows()
@@ -99,7 +115,6 @@ class Excel
         $this->rowIterator->resetStart(2);
 
         foreach ($this->rowIterator as $row) {
-
             $object = new \stdClass();
 
             //Cell iterator
@@ -108,27 +123,15 @@ class Excel
 
             //Relate each cell with its key
             foreach ($cellIterator as $cell) {
-
                 if ($key = $this->keys[$cell->getColumn()] ?? null) {
                     $value = $cell->getValue() ?? '';
 
-                    $object->$key = $value;
+                    $object->{$key} = $value;
                 }
-
             }
 
             //Each cell as object
             $this->rows[] = $object;
         }
     }
-
-    /**
-     * Return the rows array
-     * @return array
-     */
-    public function rows()
-    {
-        return $this->rows;
-    }
-
 }

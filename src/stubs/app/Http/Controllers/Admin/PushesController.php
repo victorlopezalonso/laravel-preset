@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Notification;
 use App\Http\Controllers\ApiController;
 use App\Http\Requests\Admin\Pushes\SendPushRequest;
-use App\Models\Notification;
 
 class PushesController extends ApiController
 {
-
     /**
-     * Send generic push notification
+     * Send generic push notification.
      *
      * @param SendPushRequest $request
-     * @return \App\Http\Responses\ApiResponse
+     *
      * @throws \GuzzleHttp\Exception\GuzzleException
+     *
+     * @return \App\Http\Responses\ApiResponse
      */
     public function sendPush(SendPushRequest $request)
     {

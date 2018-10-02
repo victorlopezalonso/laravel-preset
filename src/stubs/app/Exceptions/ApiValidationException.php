@@ -7,12 +7,12 @@ use Illuminate\Validation\ValidationException;
 
 class ApiValidationException extends ApiException
 {
-
     /** @var int HTTP Status */
     protected $status = HTTP_CODE_422_UNPROCESSABLE_ENTITY;
 
     /**
      * ValidationException constructor.
+     *
      * @param ValidationException $exception
      */
     public function __construct(ValidationException $exception)
@@ -23,7 +23,8 @@ class ApiValidationException extends ApiException
     }
 
     /**
-     * Set the message bag from the ValidationException
+     * Set the message bag from the ValidationException.
+     *
      * @param ValidationException $exception
      */
     protected function setMessageAndValidations(ValidationException $exception)
@@ -36,5 +37,4 @@ class ApiValidationException extends ApiException
             $this->validations[$key] = $value;
         }, $messageBag->keys(), $messageBag->all());
     }
-
 }

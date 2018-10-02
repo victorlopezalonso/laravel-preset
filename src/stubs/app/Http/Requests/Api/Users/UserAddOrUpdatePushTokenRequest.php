@@ -14,7 +14,6 @@ use App\Http\Requests\ApiRequest;
  */
 class UserAddOrUpdatePushTokenRequest extends ApiRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -23,8 +22,7 @@ class UserAddOrUpdatePushTokenRequest extends ApiRequest
     public function rules()
     {
         return [
-            'token' => 'required'
+            'token' => 'required',
         ];
     }
-
 }

@@ -6,26 +6,27 @@ use App\Classes\OneSignal;
 
 class Notification extends ApiModel
 {
-
     protected $casts = [
         'title'      => 'json',
         'header'     => 'array',
         'content'    => 'array',
-        'created_at' => 'string'
+        'created_at' => 'string',
     ];
 
     /**
-     * Return the image public url
+     * Return the image public url.
+     *
      * @param $value
+     *
      * @return null|string
      */
     public function getImageAttribute($value)
     {
-        return $value ? asset('storage/' . NOTIFICATION_IMAGES_DIRECTORY . $value) : null;
+        return $value ? asset('storage/'.NOTIFICATION_IMAGES_DIRECTORY.$value) : null;
     }
 
     /**
-     * @return string|null
+     * @return null|string
      */
     public function localizedTitle()
     {
@@ -33,7 +34,7 @@ class Notification extends ApiModel
     }
 
     /**
-     * @return string|null
+     * @return null|string
      */
     public function localizedHeader()
     {
@@ -41,7 +42,7 @@ class Notification extends ApiModel
     }
 
     /**
-     * @return string|null
+     * @return null|string
      */
     public function localizedContent()
     {
@@ -49,12 +50,13 @@ class Notification extends ApiModel
     }
 
     /**
-     * Returns the last notification id
+     * Returns the last notification id.
+     *
      * @return mixed
      */
     public static function getLastId()
     {
-        return Notification::orderBy('created_at', 'desc')->first()->id;
+        return self::orderBy('created_at', 'desc')->first()->id;
     }
 
     /**
@@ -63,10 +65,10 @@ class Notification extends ApiModel
     public function send()
     {
         OneSignal::make()
-                 ->title($this->title)
-                 ->content($this->header)
-                 ->param('pushId', $this->id)
-                 ->url($this->url)
-                 ->send();
+            ->title($this->title)
+            ->content($this->header)
+            ->param('pushId', $this->id)
+            ->url($this->url)
+            ->send();
     }
 }

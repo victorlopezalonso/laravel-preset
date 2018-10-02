@@ -2,37 +2,37 @@
 
 namespace App;
 
+use Ramsey\Uuid\Uuid;
 use App\Models\ApiModel;
+use Lcobucci\JWT\Parser;
+use App\Mail\WelcomeMail;
+use Laravel\Passport\Token;
+use App\Mail\ForgotPassMail;
 use App\Traits\PassportUser;
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Auth\MustVerifyEmail;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Foundation\Auth\Access\Authorizable;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use App\Http\Requests\Api\Users\UserAddOrUpdatePushTokenRequest;
-use App\Http\Requests\Api\Users\UserRegisterRequest;
-use App\Http\Requests\Api\Users\UserUpdateRequest;
-use App\Http\Requests\Api\Users\UpdatePasswordRequest;
-use App\Http\Requests\Api\Users\UserLoginRequest;
-use App\Exceptions\ApiNotValidatedUserException;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
+use App\Models\UserPushToken;
 use App\Helpers\StorageHelper;
 use App\Http\Requests\Headers;
 use App\Mail\AdminCredentials;
 use App\Mail\VerificationMail;
-use App\Mail\ForgotPassMail;
-use App\Mail\WelcomeMail;
-use Laravel\Passport\Token;
-use Lcobucci\JWT\Parser;
-use Ramsey\Uuid\Uuid;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Auth\MustVerifyEmail;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use App\Exceptions\ApiNotValidatedUserException;
+use App\Http\Requests\Api\Users\UserLoginRequest;
+use App\Http\Requests\Api\Users\UserUpdateRequest;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use App\Http\Requests\Api\Users\UserRegisterRequest;
+use App\Http\Requests\Api\Users\UpdatePasswordRequest;
+use App\Http\Requests\Api\Users\UserAddOrUpdatePushTokenRequest;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
 class User extends ApiModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
-
     use Authenticatable, Authorizable, Notifiable, CanResetPassword, PassportUser, MustVerifyEmail;
 
     protected $appends = ['authorization'];
@@ -43,20 +43,20 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     ];
 
     /**
-     *  Things to do when a user is created or updated
+     *  Things to do when a user is created or updated.
      */
     public static function boot()
     {
         parent::boot();
 
         self::creating(function ($model) {
-            $model->password   = $model->password ? bcrypt($model->password) : $model->password;
+            $model->password = $model->password ? bcrypt($model->password) : $model->password;
             $model->mail_token = Uuid::uuid1()->toString();
-            $model->os         = Headers::getOsAsInteger();
+            $model->os = Headers::getOsAsInteger();
         });
 
         self::created(function ($model) {
-            /** @var User $model */
+            // @var User $model
             //$model->func();
         });
 
@@ -66,9 +66,9 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * Return the user related to the request bearer token
+     * Return the user related to the request bearer token.
      *
-     * @return User|null
+     * @return null|User
      */
     public static function byToken()
     {
@@ -76,7 +76,7 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
 
         $tokenId = (new Parser())->parse($bearerToken)->getHeader('jti');
 
-        if ( ! $token = Token::find($tokenId)) {
+        if (! $token = Token::find($tokenId)) {
             return null;
         }
 
@@ -84,7 +84,7 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * Revoke the requested user token
+     * Revoke the requested user token.
      */
     public function revokeRequestedAccessToken()
     {
@@ -96,7 +96,8 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * Set the pagination limit from the request or from the API constant
+     * Set the pagination limit from the request or from the API constant.
+     *
      * @return int
      */
     public function getPerPage()
@@ -105,17 +106,20 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * Return the public url of the user photo
+     * Return the public url of the user photo.
+     *
      * @param $value
+     *
      * @return null|string
      */
     public function getPhotoAttribute($value)
     {
-        return $value ? asset('storage/' . USER_PHOTOS_DIRECTORY . $value) : null;
+        return $value ? asset('storage/'.USER_PHOTOS_DIRECTORY.$value) : null;
     }
 
     /**
-     * User is admin
+     * User is admin.
+     *
      * @return bool
      */
     public function isAdmin()
@@ -124,21 +128,23 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * User has root permissions
+     * User has root permissions.
+     *
      * @return bool
      */
     public function hasRootPermissions()
     {
-        return $this->permissions === ROOT_USER;
+        return ROOT_USER === $this->permissions;
     }
 
     /**
-     * User has admin permissions or greater
+     * User has admin permissions or greater.
+     *
      * @return bool
      */
     public function hasAdminPermissions()
     {
-        return ($this->permissions !== GENERIC_USER) && ($this->permissions <= ADMIN_USER);
+        return (GENERIC_USER !== $this->permissions) && ($this->permissions <= ADMIN_USER);
     }
 
     /**
@@ -158,7 +164,7 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * Save the user photo
+     * Save the user photo.
      */
     public function savePhoto()
     {
@@ -180,11 +186,13 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * Create a new user and send a verification Mail (if needed)
+     * Create a new user and send a verification Mail (if needed).
      *
      * @param $request
-     * @return User
+     *
      * @throws \Throwable
+     *
+     * @return User
      */
     public static function registerWithEmail(UserRegisterRequest $request)
     {
@@ -204,8 +212,10 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
 
     /**
      * @param UserRegisterRequest $request
-     * @return User
+     *
      * @throws \Throwable
+     *
+     * @return User
      */
     public static function registerWithFacebook(UserRegisterRequest $request)
     {
@@ -225,8 +235,10 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
 
     /**
      * @param UserRegisterRequest $request
-     * @return User
+     *
      * @throws \Throwable
+     *
+     * @return User
      */
     public static function registerWithGoogle(UserRegisterRequest $request)
     {
@@ -242,26 +254,27 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
         }
 
         return $user;
-
     }
 
     /**
-     * Login with email
+     * Login with email.
      *
      * @param UserLoginRequest $request
-     * @return User|null
+     *
      * @throws \Throwable
+     *
+     * @return null|User
      */
     public static function loginWithEmail(UserLoginRequest $request)
     {
         /** @var User $user */
         $user = self::where(['email' => $request->get('email')])->first();
 
-        if ( ! $user || ! Hash::check($request->get('password'), $user->getAuthPassword())) {
+        if (! $user || ! Hash::check($request->get('password'), $user->getAuthPassword())) {
             return null;
         }
 
-        throw_if(USER_MUST_VERIFY_EMAIL && ! $user->verified, new ApiNotValidatedUserException);
+        throw_if(USER_MUST_VERIFY_EMAIL && ! $user->verified, new ApiNotValidatedUserException());
 
         $user->update(['os' => Headers::getOsAsInteger()]);
 
@@ -272,8 +285,10 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
 
     /**
      * @param UserLoginRequest $request
-     * @return User
+     *
      * @throws \Throwable
+     *
+     * @return User
      */
     public static function loginWithFacebook(UserLoginRequest $request)
     {
@@ -281,7 +296,7 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
 
         $query = $request->get('email') ? $query->orWhere('email', $request->get('email')) : $query;
 
-        if ( ! $user = $query->orWhere('facebook_id', $request->get('facebookId'))->first()) {
+        if (! $user = $query->orWhere('facebook_id', $request->get('facebookId'))->first()) {
             $user = static::create($request->params('email', 'facebookId', 'name', 'advertising'));
             $user->savePhoto();
         }
@@ -294,10 +309,13 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * Login with Google
+     * Login with Google.
+     *
      * @param UserLoginRequest $request
-     * @return User|null
+     *
      * @throws \Throwable
+     *
+     * @return null|User
      */
     public static function loginWithGoogle(UserLoginRequest $request)
     {
@@ -305,7 +323,7 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
 
         $query = $request->get('email') ? $query->orWhere('email', $request->get('email')) : $query;
 
-        if ( ! $user = $query->orWhere('google_id', $request->get('googleId'))->first()) {
+        if (! $user = $query->orWhere('google_id', $request->get('googleId'))->first()) {
             $user = static::create($request->params('email', 'googleId', 'name', 'advertising'));
             $user->savePhoto();
         }
@@ -318,14 +336,17 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * Verify the user mail by the mail token
+     * Verify the user mail by the mail token.
+     *
      * @param string $mailToken
-     * @return User|bool
+     *
      * @throws \Exception
+     *
+     * @return bool|User
      */
     public static function verifyMail(string $mailToken)
     {
-        if ( ! $user = static::where('mail_token', $mailToken)->first()) {
+        if (! $user = static::where('mail_token', $mailToken)->first()) {
             return false;
         }
 
@@ -338,7 +359,7 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * Send a welcome mail to the user
+     * Send a welcome mail to the user.
      */
     public function sendWelcomeMail()
     {
@@ -346,7 +367,7 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * Send a verification mail to the user
+     * Send a verification mail to the user.
      */
     public function sendVerificationMail()
     {
@@ -354,7 +375,8 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     * Send a welcome mail to the admin user with the credentials
+     * Send a welcome mail to the admin user with the credentials.
+     *
      * @param $password
      */
     public function sendEmailWithAdminCredentials($password)
@@ -363,7 +385,7 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
-     *Send a mail with forgotten password
+     *Send a mail with forgotten password.
      */
     public function sendForgotPasswordMail()
     {
@@ -372,6 +394,7 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
 
     /**
      * @param $request
+     *
      * @return bool
      */
     public function updatePassword(UpdatePasswordRequest $request)
@@ -386,7 +409,7 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
      */
     public function addOrUpdatePushToken(UserAddOrUpdatePushTokenRequest $request)
     {
-        if ( ! USER_HAS_MULTIPLE_PUSH_TOKENS) {
+        if (! USER_HAS_MULTIPLE_PUSH_TOKENS) {
             $this->pushTokens()->delete();
         }
 
@@ -406,5 +429,4 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
 
         $this->update($params);
     }
-
 }

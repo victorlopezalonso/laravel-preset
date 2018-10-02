@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 
 class LaravelInfo extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -39,5 +38,4 @@ class LaravelInfo extends Command
 
         $this->table(array_keys($vars), [$vars]);
     }
-
 }

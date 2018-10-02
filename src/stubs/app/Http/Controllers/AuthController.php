@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\Api\Users\UserUpdateRequest;
+use App\Http\Resources\Api\Users\UserProfileResource;
 use App\Http\Requests\Api\Users\UpdatePasswordRequest;
 use App\Http\Requests\Api\Users\UserAddOrUpdatePushTokenRequest;
-use App\Http\Resources\Api\Users\UserProfileResource;
-use App\Http\Requests\Api\Users\UserUpdateRequest;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends ApiController
 {
-
     /**
-     * Return the user profile
+     * Return the user profile.
      *
      * @return \App\Http\Responses\ApiResponse
      */
@@ -24,9 +23,10 @@ class AuthController extends ApiController
     }
 
     /**
-     * Update the auth user profile and return the user
+     * Update the auth user profile and return the user.
      *
      * @param UserUpdateRequest $request
+     *
      * @return \App\Http\Responses\ApiResponse
      */
     public function update(UserUpdateRequest $request)
@@ -41,7 +41,8 @@ class AuthController extends ApiController
     }
 
     /**
-     * Update the auth user photo
+     * Update the auth user photo.
+     *
      * @return \App\Http\Responses\ApiResponse
      */
     public function photo()
@@ -53,6 +54,7 @@ class AuthController extends ApiController
 
     /**
      * @param UpdatePasswordRequest $request
+     *
      * @return \App\Http\Responses\ApiResponse
      */
     public function updatePassword(UpdatePasswordRequest $request)
@@ -64,6 +66,7 @@ class AuthController extends ApiController
 
     /**
      * @param UserAddOrUpdatePushTokenRequest $request
+     *
      * @return \App\Http\Responses\ApiResponse
      */
     public function addOrUpdatePushToken(UserAddOrUpdatePushTokenRequest $request)
@@ -74,7 +77,8 @@ class AuthController extends ApiController
     }
 
     /**
-     * Deletes the user
+     * Deletes the user.
+     *
      * @throws \Exception
      */
     public function destroy()
@@ -83,5 +87,4 @@ class AuthController extends ApiController
 
         return $this->response();
     }
-
 }

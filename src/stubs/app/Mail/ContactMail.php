@@ -9,13 +9,13 @@ use Illuminate\Queue\SerializesModels;
 
 class ContactMail extends Mailable
 {
-
     use Queueable, SerializesModels;
     private $email;
     private $message;
 
     /**
      * AlertStarted constructor.
+     *
      * @param $email
      * @param $message
      */

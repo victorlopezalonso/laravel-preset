@@ -69,15 +69,4 @@ class SplashTest extends ApiTestCase
         $this->assertMessage(APP_IN_MAINTENANCE);
     }
 
-    /** @test */
-    public function splash_must_return_colors_and_icons()
-    {
-        $this->setHeader(APP_VERSION_HEADER, Config::first()->ios_version);
-
-        $this->apiCall('get', 'api/v1/app/splash')->assertStatus(HTTP_CODE_200_OK);
-
-        $this->assertNotNull($this->data->icons);
-        $this->assertNotNull($this->data->colors);
-        $this->assertNotNull($this->data->fileIcons);
-    }
 }

@@ -19,7 +19,6 @@ class UserSendResetLinkEmailRequest extends ApiRequest
      *
      * @return array
      */
-
     public function rules()
     {
         return [

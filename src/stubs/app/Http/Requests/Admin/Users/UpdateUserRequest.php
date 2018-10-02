@@ -6,7 +6,6 @@ use App\Http\Requests\ApiRequest;
 
 class UpdateUserRequest extends ApiRequest
 {
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -21,5 +20,4 @@ class UpdateUserRequest extends ApiRequest
             'permissions' => 'required',
         ];
     }
-
 }

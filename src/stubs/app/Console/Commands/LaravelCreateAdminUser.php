@@ -7,7 +7,6 @@ use Illuminate\Console\Command;
 
 class LaravelCreateAdminUser extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -24,8 +23,6 @@ class LaravelCreateAdminUser extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -37,36 +34,33 @@ class LaravelCreateAdminUser extends Command
      */
     public function handle()
     {
-
         $permissionsList = [
             'Root'       => ROOT_USER,
             'Admin'      => ADMIN_USER,
-            'Consultant' => CONSULTANT_USER
+            'Consultant' => CONSULTANT_USER,
         ];
 
         system('clear');
         $this->info("Let's create a new admin account.");
 
-        $name  = $this->ask('Name');
+        $name = $this->ask('Name');
         $email = $this->ask('Email address');
 
         $permissions = $this->choice('Set the user permissions', [
             ROOT_USER       => 'Root',
             ADMIN_USER      => 'Admin',
-            CONSULTANT_USER => 'Consultant'
+            CONSULTANT_USER => 'Consultant',
         ], ROOT_USER);
 
         $permissions = $permissionsList[$permissions];
 
         do {
-
-            $password     = $this->secret('Password');
+            $password = $this->secret('Password');
             $confirmation = $this->secret('Again, just to make sure');
 
             if ($confirmation !== $password) {
                 $this->error('That doesn\'t match. Let\'s try again.');
             }
-
         } while ($confirmation !== $password);
 
         $password = encryptWithAppSecret($password);

@@ -2,37 +2,37 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Helpers\StorageHelper;
 use App\Http\Requests\Headers;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class ApiModel extends Model
 {
-
     protected $dir = '';
-
 
     /** @var array All attributes are fillable */
     protected $guarded = [];
 
     /**
      * @param array $value
-     * @param null $language
-     * @return null
+     * @param null  $language
+     *
+     * @return null|mixed
      */
     public function getLocalizedValueFromJson($value, $language = null)
     {
-        $value    = is_string($value) ? json_decode($value) : $value;
+        $value = \is_string($value) ? json_decode($value) : $value;
         $language = $language ?? Headers::getLanguage();
 
         return $value[$language] ?? null;
     }
 
     /**
-     * Upload a file a save uuid into the model
+     * Upload a file a save uuid into the model.
+     *
      * @param string $key
      * @param string $directory
      */
@@ -49,15 +49,16 @@ class ApiModel extends Model
         }
 
         //Delete old file
-        StorageHelper::deleteFileFromPublicDisk($directory, $this->$key);
+        StorageHelper::deleteFileFromPublicDisk($directory, $this->{$key});
 
         //Save fileName into model table
-        $this->$key = $fileName;
+        $this->{$key} = $fileName;
         $this->save();
     }
 
     /**
-     * Return the associated table to the model
+     * Return the associated table to the model.
+     *
      * @return mixed
      */
     public static function table()
@@ -66,7 +67,8 @@ class ApiModel extends Model
     }
 
     /**
-     * Return the columns of the table associated to the model
+     * Return the columns of the table associated to the model.
+     *
      * @return mixed
      */
     public static function getColumns()
@@ -75,7 +77,8 @@ class ApiModel extends Model
     }
 
     /**
-     * Add a new column to the table associated with the model
+     * Add a new column to the table associated with the model.
+     *
      * @param $column
      * @param $type
      * @param $params
@@ -84,8 +87,7 @@ class ApiModel extends Model
     {
         $table = static::table();
 
-        if ( ! Schema::hasColumn($table, $column)) {
-
+        if (! Schema::hasColumn($table, $column)) {
             Schema::table($table, function (Blueprint $table) use ($column, $type, $params) {
                 $table->addColumn($type, $column, $params);
             });
@@ -93,7 +95,8 @@ class ApiModel extends Model
     }
 
     /**
-     * Drop a column from the table associated with the model
+     * Drop a column from the table associated with the model.
+     *
      * @param $column
      */
     public static function dropColumn($column)
@@ -101,7 +104,6 @@ class ApiModel extends Model
         $table = static::table();
 
         if (Schema::hasColumn($table, $column)) {
-
             Schema::table($table, function (Blueprint $table) use ($column) {
                 $table->dropColumn($column);
             });
@@ -109,7 +111,8 @@ class ApiModel extends Model
     }
 
     /**
-     * Insert an array of model items into the database
+     * Insert an array of model items into the database.
+     *
      * @param array $items
      * @param array $replacements
      */
@@ -118,8 +121,7 @@ class ApiModel extends Model
         $now = Carbon::now()->toDateTimeString();
 
         foreach ($items as &$item) {
-
-            if ((new static)->usesTimestamps()) {
+            if ((new static())->usesTimestamps()) {
                 $item['created_at'] = $item['created_at'] ?? $now;
                 $item['updated_at'] = $item['updated_at'] ?? $now;
             }
@@ -129,18 +131,18 @@ class ApiModel extends Model
             }
         }
 
-        if (count($items)) {
+        if (\count($items)) {
             static::insert($items);
         }
     }
 
     /**
-     * Set the pagination limit from the request or from the API constant
+     * Set the pagination limit from the request or from the API constant.
+     *
      * @return int
      */
     public function getPerPage()
     {
         return request('limit') && request('limit') < 100 ? request('limit') : API_QUERY_RESULTS_PER_PAGE;
     }
-
 }

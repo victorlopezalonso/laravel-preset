@@ -18,7 +18,7 @@ class QuadramServiceProvider extends ServiceProvider
         PresetCommand::macro('Quadram', function ($command) {
             Preset::install();
 
-            $command->info('All finished! Please run <yarn (or npm run) laravel:init> to set up your configuration');
+            $command->info('All finished! Please run <yarn laravel-init> or <npm run laravel-init> to set up your configuration');
         });
     }
 }

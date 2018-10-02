@@ -7,7 +7,6 @@ use Illuminate\Console\Command;
 
 class LaravelDeploy extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
@@ -24,8 +23,6 @@ class LaravelDeploy extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -38,7 +35,6 @@ class LaravelDeploy extends Command
     public function handle()
     {
         switch (env('DEPLOY_MODE')) {
-
             case WEBHOOK_DEPLOY:
 
                 if (env('DEPLOY')) {
@@ -47,13 +43,12 @@ class LaravelDeploy extends Command
                 }
 
                 break;
-
             case AUTO_DEPLOY:
 
                 Console::exec(['git fetch']);
 
-                $currentCommit = intval(env('DEPLOY') ?: 0);
-                $lastCommit    = intval(Console::exec(['git --no-pager log --all -1 --format=%ct']));
+                $currentCommit = (int) (env('DEPLOY') ?: 0);
+                $lastCommit = (int) (Console::exec(['git --no-pager log --all -1 --format=%ct']));
 
                 if ($lastCommit > $currentCommit) {
                     Console::setEnvironmentValue('DEPLOY', $lastCommit);
@@ -64,11 +59,10 @@ class LaravelDeploy extends Command
             default:
                 // do nothing
         }
-
     }
 
     /**
-     * Execute the deploy routine
+     * Execute the deploy routine.
      */
     public function deploy()
     {
@@ -82,13 +76,12 @@ class LaravelDeploy extends Command
         $this->call('cache:clear');
 
         Console::exec([
-            "$composer dump-autoload",
-            "$composer install",
+            "${composer} dump-autoload",
+            "${composer} install",
         ]);
 
         $this->call('migrate', ['--force' => true]);
 
         $this->call('queue:restart');
     }
-
 }
