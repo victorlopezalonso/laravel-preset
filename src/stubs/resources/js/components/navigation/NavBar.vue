@@ -7,7 +7,7 @@
 
             <div class="navbar-brand">
 
-                <a class="navbar-item">
+                <a class="navbar-item" href="/home">
                     <!--<span class="icon"><i class="fas fa-user-secret fa-2x"></i></span>-->
                     <img src="../../../images/logo-dark.png" class="logo">
                 </a>
