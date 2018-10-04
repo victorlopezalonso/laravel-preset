@@ -48,7 +48,7 @@ class Copy extends ApiModel
      */
     public static function server($key, string ...$params)
     {
-        return Copy::translate(1, $key, ...$params);
+        return Copy::translate(SERVER_COPY, $key, ...$params);
     }
 
     /**
@@ -59,7 +59,7 @@ class Copy extends ApiModel
      */
     public static function client($key, string ...$params)
     {
-        return Copy::translate(0, $key, ...$params);
+        return Copy::translate(CLIENT_COPY, $key, ...$params);
     }
 
     /**
@@ -70,7 +70,7 @@ class Copy extends ApiModel
      */
     public static function admin($key, string ...$params)
     {
-        return Copy::translate(2, $key, ...$params);
+        return Copy::translate(ADMIN_COPY, $key, ...$params);
     }
 
     /**
