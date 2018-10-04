@@ -2,30 +2,41 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Copy;
 use App\Classes\Excel;
-use App\Models\Config;
 use App\Http\Controllers\ApiController;
+use App\Http\Resources\Admin\Copies\CopiesResource;
+use App\Models\Config;
+use App\Models\Copy;
 
 class CopiesController extends ApiController
 {
+
     /**
      * @return \App\Http\Responses\ApiResponse
      */
     public function get()
     {
+        $type = request()->query('type');
+        if($type != null){
+            $copies = CopiesResource::collection(Copy::where('type', $type)->paginate());
+        }else{
+            $copies = CopiesResource::collection(Copy::orderBy('type', 'asc')->orderBy('key', 'asc')->paginate());
+        }
+        return $this->response($copies);
+    }
+
+    public function getParameters(){
         $languages = Config::languages();
 
-        $copyModel['key'] = '';
-        $copyModel['server'] = false;
+        $copyModel['key']    = '';
+        $copyModel['type'] = CLIENT_COPY;
         foreach ($languages as $language) {
             $copyModel[$language] = '';
         }
 
         $response = [
-            'copies'    => Copy::orderBy('server', 'desc')->orderBy('key', 'asc')->get(),
             'languages' => $languages,
-            'copyModel' => $copyModel,
+            'copyModel' => $copyModel
         ];
 
         return $this->response($response);
@@ -33,7 +44,6 @@ class CopiesController extends ApiController
 
     /**
      * @param Copy $copy
-     *
      * @return Copy
      */
     public function update(Copy $copy)
@@ -49,16 +59,15 @@ class CopiesController extends ApiController
      */
     public function create()
     {
-        $request = request()->only(Config::languages());
-        $request['key'] = request('key');
-        $request['server'] = request('server');
+        $request           = request()->only(Config::languages());
+        $request['key']    = request('key');
+        $request['type'] = request('type');
 
         return Copy::create($request);
     }
 
     /**
      * @param Copy $copy
-     *
      * @throws \Exception
      */
     public function delete(Copy $copy)
@@ -67,12 +76,11 @@ class CopiesController extends ApiController
     }
 
     /**
-     * Create or update the database copies using an excel file.
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
-     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
+     * Create or update the database copies using an excel file
      *
      * @return \App\Http\Responses\ApiResponse
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Reader\Exception
      */
     public function importFromExcel()
     {
@@ -81,13 +89,14 @@ class CopiesController extends ApiController
         $xls = new Excel(request()->file('copies'));
 
         foreach ($xls->rows() as $row) {
+
             $info = [
                 'key'    => $row->key,
-                'server' => $row->server ?? false,
+                'type' => $row->type ?? false
             ];
 
             foreach ($languages as $language) {
-                $translations[$language] = $row->{$language} ?? '';
+                $translations[$language] = $row->$language ?? '';
             }
 
             Copy::updateOrCreate($info, $translations ?? []);
@@ -97,17 +106,16 @@ class CopiesController extends ApiController
     }
 
     /**
-     * Export the database copies as an excel file and return the file.
-     *
+     * Export the database copies as an excel file and return the file
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
      */
     public function exportExcel()
     {
         $headers = array_merge(['key'], Config::languages());
-        array_push($headers, 'server');
+        array_push($headers, 'type');
 
-        $rows = Copy::orderBy('server', 'desc')->orderBy('key', 'asc')->get($headers)->toArray();
+        $rows = Copy::orderBy('type', 'desc')->orderBy('key', 'asc')->get($headers)->toArray();
 
         $excel = Excel::createFile('copies.xlsx', $headers, $rows);
 

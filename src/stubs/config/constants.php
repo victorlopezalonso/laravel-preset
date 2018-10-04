@@ -185,6 +185,11 @@ define('API_KEY', in_array(env('APP_ENV'), [LOCAL_ENVIRONMENT, DEVELOPMENT_ENVIR
  ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝╚══════╝
 */
 
+//Copy types
+const CLIENT_COPY = 0;
+const SERVER_COPY = 1;
+const ADMIN_COPY = 2;
+
 const SERVER_ERROR = 'SERVER_ERROR';
 const NO_API_KEY = 'NO_API_KEY';
 const NO_APP_VERSION = 'NO_APP_VERSION';

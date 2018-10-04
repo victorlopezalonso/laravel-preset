@@ -19,7 +19,7 @@ class CreateCopiesTable extends Migration
             $table->string('key');
             $table->longText('es')->nullable();
             $table->longText('en')->nullable();
-            $table->boolean('server')->default(false);
+            $table->tinyInteger('type')->default(CLIENT_COPY);
             $table->timestamps();
         });
     }
