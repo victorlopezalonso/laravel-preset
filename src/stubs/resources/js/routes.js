@@ -8,7 +8,8 @@ let CONSULTANT_USER = CONSTANTS.CONSULTANT_USER.permissions;
 
 let routes = [
     {
-        name: 'Home',
+        name_en: 'Home',
+        name_es: 'Inicio',
         path: '/',
         component: require('./components/Home'),
         meta: {
@@ -17,7 +18,8 @@ let routes = [
         }
     },
     {
-        name: 'Settings',
+        name_en: 'Settings',
+        name_es: 'Ajustes',
         path: '/settings',
         component: require('./components/Config'),
         meta: {
@@ -26,7 +28,8 @@ let routes = [
         }
     },
     {
-        name: 'Copies',
+        name_en: 'Copies',
+        name_es: 'Copies',
         path: '/copies',
         component: require('./components/Copies'),
         meta: {
@@ -35,7 +38,8 @@ let routes = [
         }
     },
     {
-        name: 'Users',
+        name_en: 'Users',
+        name_es: 'Usuarios',
         path: '/users',
         component: require('./components/Users'),
         meta: {
@@ -44,7 +48,8 @@ let routes = [
         }
     },
     {
-        name: 'Pushes',
+        name_en: 'Pushes',
+        name_es: 'Pushes',
         path: '/pushes',
         component: require('./components/Pushes'),
         meta: {

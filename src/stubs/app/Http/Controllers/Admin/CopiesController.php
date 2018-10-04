@@ -18,7 +18,7 @@ class CopiesController extends ApiController
     {
         $type = request()->query('type');
         if($type != null){
-            $copies = CopiesResource::collection(Copy::where('type', $type)->paginate());
+            $copies = CopiesResource::collection(Copy::where('type', $type)->orderBy('key', 'asc')->paginate());
         }else{
             $copies = CopiesResource::collection(Copy::orderBy('type', 'asc')->orderBy('key', 'asc')->paginate());
         }
@@ -40,6 +40,15 @@ class CopiesController extends ApiController
         ];
 
         return $this->response($response);
+    }
+
+    /**
+     * @return \App\Http\Responses\ApiResponse
+     */
+    public function getAdminCopies()
+    {
+        $lang = request()->query('lang');
+        return $this->response(Copy::where('type', ADMIN_COPY)->pluck($lang, 'key'));
     }
 
     /**

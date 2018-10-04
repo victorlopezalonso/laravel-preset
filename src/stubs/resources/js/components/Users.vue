@@ -4,7 +4,7 @@
 
         <div class="button is-primary" @click="showCreateModal=true" v-if="CONSTANTS.hasRootPermissions()">
             <span class="icon"><i class="fas fa-plus fa-lg"></i></span>
-            <span>Add User</span>
+            <span class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_ADD')}} {{CONSTANTS.getCopy('ADMIN_USER')}}</span>
         </div>
         <br><br>
 
@@ -13,15 +13,15 @@
                      v-on:save="addUser"
                      v-on:close="showCreateModal=false"/>
 
-        <table class="table is-striped">
+        <table class="table is-striped" style="margin: auto;">
 
             <thead>
             <tr>
-                <th>Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Admin</th>
-                <th>Permissions</th>
+                <th class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_NAME')}}</th>
+                <th class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_LAST_NAME')}}</th>
+                <th class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_EMAIL')}}</th>
+                <th class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_ADMIN')}}</th>
+                <th class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_PERMISSIONS')}}</th>
                 <th></th>
                 <th></th>
             </tr>
@@ -37,13 +37,13 @@
                 <td>
                     <div class="button is-info" @click="editUser(user)">
                         <span class="icon"><i class="far fa-edit"></i></span>
-                        <span>Edit</span>
+                        <span class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_EDIT')}}</span>
                     </div>
                 </td>
                 <td>
                     <div class="button is-danger" @click="deleteUser(user)">
                         <span class="icon"><i class="far fa-trash-alt"></i></span>
-                        <span>Delete</span>
+                        <span class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_DELETE')}}</span>
                     </div>
                 </td>
             </tr>
