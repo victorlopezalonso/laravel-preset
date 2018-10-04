@@ -28,10 +28,14 @@
             </div>
 
             <!-- Check as server text -->
-            <div class="field">
-                <label class="checkbox">
-                    <input type="checkbox" v-model="newCopy.server"> Server text
-                </label>
+            <div class="control">
+                <div class="select">
+                    <select v-model="newCopy.type">
+                        <option :value="CONSTANTS.COPY_TYPE.CLIENT">Client</option>
+                        <option :value="CONSTANTS.COPY_TYPE.SERVER">Server</option>
+                        <option :value="CONSTANTS.COPY_TYPE.ADMIN">Admin</option>
+                    </select>
+                </div>
             </div>
 
         </confirm>
@@ -89,13 +93,13 @@
 
             <!-- input  -->
             <div class="control is-expanded">
-                <input class="input" type="text" placeholder="Find text (Esc to cancel)"
+                <input class="input" type="text" placeholder="Find text"
                        v-model="textFilter"
                        v-on:keyup.esc="textFilter=null">
             </div>
 
             <!-- cancel icon -->
-            <div class="control" @click="textFilter=null">
+            <div class="control">
                 <a class="button">
                     <span class="icon"><i class="fas fa-times"></i></span>
                 </a>
@@ -104,17 +108,20 @@
         </div>
 
         <!-- Show server copies -->
-        <div class="field">
-            <label class="checkbox">
-                <input type="checkbox" v-model="showServerCopies">
-                Show server texts
-            </label>
+        <div class="control">
+            <div class="select">
+                <select v-model="copyType">
+                    <option :value="CONSTANTS.COPY_TYPE.CLIENT">Client</option>
+                    <option :value="CONSTANTS.COPY_TYPE.SERVER">Server</option>
+                    <option :value="CONSTANTS.COPY_TYPE.ADMIN">Admin</option>
+                </select>
+            </div>
         </div>
 
         <br>
 
         <!-- List of copies -->
-        <div v-for="copy in filteredCopies">
+        <div v-for="copy in copies">
 
             <!-- icon and copy key -->
             <div class="level">
@@ -123,8 +130,9 @@
                     <!-- server/client icon -->
                     <div class="level-item">
                         <p>
-                            <span class="icon" v-if="copy.server"><i class="fas fa-database fa-2x"></i></span>
-                            <span class="icon" v-if="!copy.server"><i class="fas fa-mobile fa-2x"></i></span>
+                            <span class="icon" v-if="copy.type === CONSTANTS.COPY_TYPE.SERVER"><i class="fas fa-database fa-2x"></i></span>
+                            <span class="icon" v-else-if="copy.type === CONSTANTS.COPY_TYPE.CLIENT"><i class="fas fa-mobile fa-2x"></i></span>
+                            <span class="icon" v-else-if="copy.type === CONSTANTS.COPY_TYPE.ADMIN"><i class="fas fa-user-secret fa-2x"></i></span>
                         </p>
                     </div>
 
@@ -168,7 +176,7 @@
                     <span>Save</span>
                 </span>
 
-                <span class="button is-light" v-if="!isEditing(copy) && !copy.server"
+                <span class="button is-light" v-if="!isEditing(copy) && (copy.type !== CONSTANTS.COPY_TYPE.SERVER)"
                       @click="deleteCopy(copy)">
                     <span class="icon"><i class="fas fa-trash-alt fa-lg"></i></span>
                     <span>Delete</span>
@@ -177,60 +185,50 @@
             </div>
 
         </div>
+
+        <paginator :paginator="paginator" v-on:prev="navigatePrev" v-on:next="navigateNext"/>
+
     </div>
 
 </template>
 
 <script>
+    import constants from "../constants";
+
     export default {
         data() {
             return {
+                copyType: 0,
                 copies: [],
                 languages: [],
                 modal: false,
                 copyModel: null,
                 textFilter: null,
                 newCopy: {key: null},
-                showServerCopies: false,
-                copyBeforeEdition: null
+                copyBeforeEdition: null,
+                paginator: {
+                    current: 1,
+                    total: 1,
+                    limit: 10,
+                }
             }
         },
 
         mounted() {
-            this.getCopies()
+            this.getCopies(1);
+        },
+
+        watch: {
+            copyType: function() {
+                this.getCopies(1);
+            }
         },
 
         computed: {
 
-            filteredCopies() { // Filter copies by text and type (server/client)
-
-                self = this;
-
-                return this.copies.filter(function (copy) {
-
-                    if (!self.showServerCopies && copy.server) return false;
-
-                    if (!self.textFilter) return true;
-
-                    if (((copy.key.search(self.textFilter) > -1)) || (copy.key.toLowerCase().search(self.textFilter) > -1)) {
-                        return true;
-                    }
-
-                    for (let language in self.languages) {
-                        if ((copy[self.languages[language]].search(self.textFilter) > -1) || (copy[self.languages[language]].toLowerCase().search(self.textFilter) > -1)) {
-                            return true;
-                        }
-                    }
-
-                });
-            }
         },
 
         methods: {
-            initCopyModel() {
-                this.newCopy = JSON.parse(JSON.stringify(this.copyModel));
-                this.modal = false;
-            },
             isEditing(copy) {
                 return this.copyBeforeEdition && this.copyBeforeEdition.key === copy.key
             },
@@ -252,14 +250,21 @@
 
                 this.copyBeforeEdition = null;
             },
-            fetchCopies(response) {
-                this.copies = response.copies;
-                this.languages = response.languages;
-                this.copyModel = response.copyModel;
-                this.initCopyModel();
+            getCopies(page) {
+                this.api.get('/copies?type=' + this.copyType + '&page=' + page + '&limit=' + this.paginator.limit).then(response => {
+                    this.copies = response.data;
+                    this.paginator = response.paginator;
+                    this.api.get('/copies/params').then(response => {
+                        this.languages = response.data.languages;
+                        this.copyModel = response.data.copyModel;
+                        this.initCopyModel();
+                    });
+                });
             },
-            getCopies() {
-                this.api.get('/copies').then(response => this.fetchCopies(response.data));
+            initCopyModel() {
+                console.log(this.copyModel);
+                this.newCopy = JSON.parse(JSON.stringify(this.copyModel));
+                this.modal = false;
             },
             addCopy() {
                 this.api.post('/copies', this.newCopy)
@@ -305,7 +310,7 @@
                     .then(response => {
                         this.$refs.import.value = null;
                         Event.$emit('showModal', response.message);
-                        this.getCopies();
+                        this.getCopies(this.paginator.current);
                     });
 
             },
@@ -314,6 +319,12 @@
                     .then(response => {
                         window.location.assign(response.data);
                     });
+            },
+            navigatePrev(page) {
+                this.getCopies(page)
+            },
+            navigateNext(page) {
+                this.getCopies(page)
             }
         },
 
