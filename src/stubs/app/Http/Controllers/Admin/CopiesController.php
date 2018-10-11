@@ -16,13 +16,21 @@ class CopiesController extends ApiController
      */
     public function get()
     {
-        $type = request()->query('type');
-        if($type != null){
-            $copies = CopiesResource::collection(Copy::where('type', $type)->orderBy('key', 'asc')->paginate());
-        }else{
-            $copies = CopiesResource::collection(Copy::orderBy('type', 'asc')->orderBy('key', 'asc')->paginate());
+        $type = request('type');
+        $searchText = request('search');
+
+        $query = Copy::where(['type' => $type]);
+        if($searchText){
+
+            $query->where(function ($q) use ($searchText){
+                $q->orWhere('key', 'like', '%'.$searchText.'%');
+                foreach (Config::languages() as $language){
+                    $q->orWhere($language, 'like', '%'.$searchText.'%');
+                }
+            });
         }
-        return $this->response($copies);
+        //json_die($query);
+        return $this->response(CopiesResource::collection($query->orderBy('key', 'asc')->paginate()));
     }
 
     public function getParameters(){
