@@ -30,6 +30,25 @@ let hasRootPermissions = function () {
 
 let COPY_TYPE = {CLIENT: 0, SERVER: 1, ADMIN: 2};
 
+let copies = 'prueba';
+
+let getCopy = function(key){
+    return copies[key];
+};
+
+let getCopies = function(){
+    return copies;
+};
+
+let setCopies = function(adminCopies){
+    console.log(copies); //si esto no devuelve 'prueba' estamos jodidos
+    copies = adminCopies;
+    console.log(copies); //debería cambiar...
+    console.log(getCopy('ADMIN_TEXT'));
+};
+
+let language = 'es';
+
 export default {
 
     getUserType, hasRootPermissions,
@@ -38,6 +57,8 @@ export default {
 
     PERMISSIONS: [GENERIC_USER, ROOT_USER, ADMIN_USER, CONSULTANT_USER],
 
-    COPY_TYPE,
+    COPY_TYPE, setCopies, getCopy, getCopies,
+
+    language,
 
 }

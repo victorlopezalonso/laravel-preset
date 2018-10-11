@@ -2,9 +2,9 @@
 
     <div class="container">
 
-        <chart type="pie" label="Operative systems" :data="stats.os" :colors="colors.os"/>
+        <chart type="pie" :label="CONSTANTS.getCopy('ADMIN_OPERATIVE_SYSTEMS')" :data="stats.os" :colors="colors.os"/>
 
-        <chart type="bar" label="Genders" :data="stats.genders" :colors="colors.genders"/>
+        <chart type="bar" :label="CONSTANTS.getCopy('ADMIN_GENDERS')" :data="stats.genders" :colors="colors.genders"/>
 
     </div>
 
@@ -12,6 +12,7 @@
 
 <script>
     import Chart from './utilities/Chart';
+    import constants from "../constants";
 
     export default {
         components: {Chart},
@@ -29,7 +30,7 @@
         },
 
         mounted() {
-            this.api.get('/stats').then(response => {
+            this.api.get('/stats?lang=' + constants.language).then(response => {
                 this.stats = response.data;
             });
 

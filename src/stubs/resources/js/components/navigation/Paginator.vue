@@ -1,13 +1,13 @@
 <template>
 
-    <nav class="pagination" role="navigation" aria-label="pagination">
+    <nav v-if="this.paginator.total > 1" class="pagination" role="navigation" aria-label="pagination">
 
         <button class="pagination-previous" :disabled="isFirstPage" @click="navigatePrev">
-            &laquo; Previous
+            <label class="is-capitalized">&laquo; {{CONSTANTS.getCopy('ADMIN_PREVIOUS_PAGE')}}</label>
         </button>
 
         <button class="pagination-next" :disabled="isLastPage" @click="navigateNext">
-            Next page &raquo;
+            <label class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_NEXT_PAGE')}} &raquo;</label>
         </button>
 
         <ul class="pagination-list"></ul>

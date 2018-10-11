@@ -5,28 +5,28 @@
              v-on:close="close">
 
         <div class="field">
-            <label class="label">Name</label>
+            <label class="label">{{CONSTANTS.getCopy('ADMIN_NAME')}}</label>
             <div class="control">
                 <input class="input" type="text" placeholder="User name" v-model="data.name">
             </div>
         </div>
 
         <div class="field">
-            <label class="label">Lastname</label>
+            <label class="label">{{CONSTANTS.getCopy('LAST_NAME')}}</label>
             <div class="control">
                 <input class="input" type="text" placeholder="last name" v-model="data.lastname">
             </div>
         </div>
 
         <div class="field">
-            <label class="label">Email</label>
+            <label class="label">{{CONSTANTS.getCopy('ADMIN_EMAIL')}}</label>
             <div class="control">
                 <input class="input" type="email" placeholder="email" v-model="data.email">
             </div>
         </div>
 
         <div class="field" v-if="hasRootPermissionsAndIsNotRoot()">
-            <label class="label">Permissions</label>
+            <label class="label">{{CONSTANTS.getCopy('ADMIN_PERMISSIONS')}}</label>
             <div class="control">
                 <div class="select">
                     <select class="select" v-model="data.permissions">
