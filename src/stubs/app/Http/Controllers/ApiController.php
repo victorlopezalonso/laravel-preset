@@ -83,6 +83,16 @@ class ApiController extends Controller
     }
 
     /**
+     * Create a response with a 204 HTTP status.
+     *
+     * @return ApiResponse
+     */
+    public function responseWithoutContent()
+    {
+        return $this->response->withStatus(HTTP_CODE_204_OK_NO_CONTENT);
+    }
+
+    /**
      * Create a response with a 404 HTTP status.
      *
      * @param string $message
