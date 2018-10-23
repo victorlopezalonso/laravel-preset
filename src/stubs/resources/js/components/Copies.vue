@@ -48,7 +48,7 @@
                 <div class="level-item">
                     <div class="button is-primary" @click="modal=!modal">
                         <span class="icon"><i class="fas fa-plus fa-lg"></i></span>
-                        <span>Add text</span>
+                        <span class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_ADD')}} {{CONSTANTS.getCopy('ADMIN_COPY')}}</span>
                     </div>
                 </div>
 
@@ -57,22 +57,22 @@
             <div class="level-right">
 
                 <div class="level-item">
-                    <div class="file is-info">
+                    <div class="file is-warning">
                         <label class="file-label">
                             <input ref="import" class="file-input" type="file" accept=".xls, .xlsx"
                                    @change="uploadExcel">
                             <span class="file-cta">
                                     <span class="file-icon"><i class="fas fa-upload fa-lg"></i></span>
-                                    <span class="file-label">Import from file</span>
+                                    <span class="file-label is-capitalized">{{CONSTANTS.getCopy('IMPORT_FROM_FILE')}}</span>
                                 </span>
                         </label>
                     </div>
                 </div>
 
                 <div class="level-item">
-                    <div class="button is-info" @click="exportExcel">
+                    <div class="button is-warning" @click="exportExcel">
                         <span class="icon"><i class="fas fa-download fa-lg"></i></span>
-                        <span>Download into a file</span>
+                        <span class="is-capitalized">{{CONSTANTS.getCopy('DOWNLOAD_INTO_FILE')}}</span>
                     </div>
                 </div>
 
@@ -100,9 +100,10 @@
 
             <!-- cancel icon -->
             <div class="control">
-                <a class="button">
-                    <span class="icon"><i class="fas fa-times"></i></span>
-                </a>
+                <div class="button is-primary" @click="getCopies">
+                    <span class="icon"><i class="fas fa-search"></i></span>
+                    <span class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_SEARCH')}}</span>
+                </div>
             </div>
 
         </div>
@@ -161,25 +162,25 @@
                 <span class="button is-light" v-if="!isEditing(copy)"
                       @click="editCopy(copy)">
                     <span class="icon"><i class="fas fa-edit fa-lg"></i></span>
-                    <span>Edit</span>
+                    <span class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_EDIT')}}</span>
                 </span>
 
                 <span class="button is-danger" v-if="isEditing(copy)"
                       @click="cancelEditCopy">
                     <span class="icon"><i class="fas fa-times fa-lg"></i></span>
-                    <span>Cancel</span>
+                    <span class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_CANCEL')}}</span>
                 </span>
 
                 <span class="button is-success" v-if="isEditing(copy)"
                       @click="updateCopy(copy)">
                     <span class="icon"><i class="fas fa-save fa-lg"></i></span>
-                    <span>Save</span>
+                    <span class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_SAVE')}}</span>
                 </span>
 
                 <span class="button is-light" v-if="!isEditing(copy) && (copy.type !== CONSTANTS.COPY_TYPE.SERVER)"
                       @click="deleteCopy(copy)">
                     <span class="icon"><i class="fas fa-trash-alt fa-lg"></i></span>
-                    <span>Delete</span>
+                    <span class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_DELETE')}}</span>
                 </span>
 
             </div>
@@ -251,7 +252,11 @@
                 this.copyBeforeEdition = null;
             },
             getCopies(page) {
-                this.api.get('/copies?type=' + this.copyType + '&page=' + page + '&limit=' + this.paginator.limit).then(response => {
+                let $querys = '?type=' + this.copyType + '&page=' + page + '&limit=' + this.paginator.limit;
+                if(this.textFilter) {
+                    $querys += '&search=' + this.textFilter;
+                }
+                this.api.get('/copies' + $querys).then(response => {
                     this.copies = response.data;
                     this.paginator = response.paginator;
                     this.api.get('/copies/params').then(response => {
@@ -262,14 +267,13 @@
                 });
             },
             initCopyModel() {
-                console.log(this.copyModel);
                 this.newCopy = JSON.parse(JSON.stringify(this.copyModel));
                 this.modal = false;
             },
             addCopy() {
                 this.api.post('/copies', this.newCopy)
-                    .then(response => {
-                        this.copies.push(response);
+                    .then(() => {
+                        this.getCopies(this.paginator.current);
                         this.initCopyModel();
                     });
             },

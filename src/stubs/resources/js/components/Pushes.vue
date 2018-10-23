@@ -4,7 +4,7 @@
 
         <!-- Title -->
         <div class="field">
-            <label class="label">Title</label>
+            <label class="label is-capitalized">{{CONSTANTS.getCopy('ADMIN_TITLE')}}</label>
 
             <div v-for="language in languages" class="field has-addons">
                 <p class="control">
@@ -19,7 +19,7 @@
 
         <!-- Header -->
         <div class="field">
-            <label class="label">Header</label>
+            <label class="label is-capitalized">{{CONSTANTS.getCopy('ADMIN_HEADER')}}</label>
 
             <div v-for="language in languages" class="field has-addons">
                 <p class="control">
@@ -34,7 +34,7 @@
 
         <!-- Content -->
         <div class="field">
-            <label class="label">Content</label>
+            <label class="label is-capitalized">{{CONSTANTS.getCopy('ADMIN_CONTENT')}}</label>
 
             <div v-for="language in languages" class="field has-addons">
                 <p class="control">
@@ -50,13 +50,13 @@
 
         <!-- Image -->
         <div class="field">
-            <label class="label">Image</label>
+            <label class="label is-capitalized">{{CONSTANTS.getCopy('ADMIN_IMAGE')}}</label>
             <div class="file is-info has-name is-fullwidth">
                 <label class="file-label">
                     <input ref="image" class="file-input" type="file" name="resume" accept="image/*" @change="setImage">
                     <span class="file-cta">
                     <span class="file-icon"><i class="fas fa-upload"></i></span>
-                    <span class="file-label">Choose an image...</span>
+                    <span class="file-label">{{CONSTANTS.getCopy('ADMIN_CHOOSE_IMAGE')}}</span>
                 </span>
                     <span class="file-name">{{imageName}}</span>
                 </label>
@@ -65,9 +65,9 @@
 
         <!-- URL -->
         <div class="field">
-            <label class="label">Link</label>
+            <label class="label is-capitalized">{{CONSTANTS.getCopy('ADMIN_LINK')}}</label>
             <div class="control has-icons-left">
-                <input class="input" type="text" placeholder="Url to open when the app receives the push notification"
+                <input class="input" type="text" :placeholder="CONSTANTS.getCopy('ADMIN_LINK_DESCRIPTION')"
                        v-model="push.url">
                 <span class="icon is-small is-left"><i class="fas fa-link fa-lg"></i></span>
             </div>
@@ -76,7 +76,7 @@
         <!-- Send notification -->
         <div class="button is-primary" @click="sendNotification">
             <!--<span class="icon"><i class="fas fa-upload fa-lg"></i></span>-->
-            <span>Send notification</span>
+            <span>{{CONSTANTS.getCopy('ADMIN_SEND_NOTIFICATION')}}</span>
         </div>
 
     </div>

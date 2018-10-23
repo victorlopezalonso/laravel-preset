@@ -43,5 +43,18 @@ Vue.prototype.CONSTANTS = constants;
 const app = new Vue({
     el: '#app',
 
-    router
+
+    router,
+
+    created() {
+        this.getAdminCopies();
+    },
+
+    methods: {
+        getAdminCopies(){
+            this.api.get('/copies/admin?lang=' + constants.language).then(response => {
+                constants.setCopies(response.data);
+            });
+        }
+    }
 });

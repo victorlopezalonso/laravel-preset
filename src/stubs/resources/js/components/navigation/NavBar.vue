@@ -56,9 +56,9 @@
                 <p class="title">
                     {{routeName}}
                 </p>
-                <p class="subtitle">
-                    {{routeDescription}}
-                </p>
+                <!--<p class="subtitle">-->
+                    <!--{{routeDescription}}-->
+                <!--</p>-->
             </div>
         </section>
 
@@ -67,6 +67,8 @@
 </template>
 
 <script>
+    import constants from "../../constants";
+
     export default {
         data() {
             return {
@@ -76,7 +78,7 @@
                 user: {
                     'name': '',
                     'permissions': 0
-                }
+                },
             }
         },
 
@@ -129,7 +131,14 @@
                     let userHasEnoughPermissions = this.user.permissions <= route.meta.permissions;
 
                     if (isAllowedRoute || (!isGenericUser && userHasEnoughPermissions)) {
-                        this.items.push({name: route.name, path: route.path});
+                        switch (constants.language){
+                            case 'es':
+                                this.items.push({name: route.name_es, path: route.path});
+                                break;
+                            case 'en':
+                                this.items.push({name: route.name_en, path: route.path});
+                                break;
+                        }
                     }
                 });
             }
