@@ -12,6 +12,7 @@ Route::group(['prefix' => 'v1/session'], function () {
      *      @SWG\Parameter(ref="#/parameters/apiKey"),
      *      @SWG\Parameter(ref="#/parameters/Language"),
      *      @SWG\Parameter(ref="#/parameters/os"),
+     *      @SWG\Parameter(ref="#/parameters/appVersion"),
      *      @SWG\Parameter(name="body", in="body", @SWG\Schema(ref="#/definitions/UserLoginRequest")),
      *      @SWG\Response(response=HTTP_CODE_200_OK, description="User profile", @SWG\Schema(ref="#/definitions/UserProfileResource")),
      * )
@@ -28,6 +29,7 @@ Route::group(['prefix' => 'v1/session'], function () {
      *      @SWG\Parameter(ref="#/parameters/apiKey"),
      *      @SWG\Parameter(ref="#/parameters/Language"),
      *      @SWG\Parameter(ref="#/parameters/os"),
+     *      @SWG\Parameter(ref="#/parameters/appVersion"),
      *      @SWG\Parameter(ref="#/parameters/Authorization"),
      *      @SWG\Parameter(ref="#/parameters/refreshToken"),
      *      @SWG\Response(response=HTTP_CODE_200_OK, description="New Access Token for the user", @SWG\Schema(ref="#/definitions/AccessToken")),
@@ -46,6 +48,7 @@ Route::group(['prefix' => 'v1/session'], function () {
      *      @SWG\Parameter(ref="#/parameters/apiKey"),
      *      @SWG\Parameter(ref="#/parameters/Language"),
      *      @SWG\Parameter(ref="#/parameters/os"),
+     *      @SWG\Parameter(ref="#/parameters/appVersion"),
      *      @SWG\Parameter(ref="#/parameters/Authorization"),
      *      @SWG\Response(response=HTTP_CODE_200_OK, description="User logged out"),
      * )

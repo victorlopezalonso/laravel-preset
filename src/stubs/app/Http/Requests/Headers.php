@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Exceptions\ApiAppInMaintenanceException;
+use App\Exceptions\ApiVersionOutdatedException;
+use App\Http\Responses\ApiResponse;
 use App\Models\Config;
+use App\Models\Copy;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -46,7 +50,7 @@ class Headers
     {
         $language = request()->header(LANGUAGE_HEADER);
 
-        if (! $language || ! \in_array($language, Config::languages(), true)) {
+        if (!$language || !\in_array($language, Config::languages(), true)) {
             return API_DEFAULT_LANGUAGE;
         }
 
@@ -117,7 +121,7 @@ class Headers
      */
     public static function checkHeaders()
     {
-        if (! CHECK_HEADERS_MIDDLEWARE) {
+        if (!CHECK_HEADERS_MIDDLEWARE) {
             return;
         }
 
@@ -130,5 +134,7 @@ class Headers
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }
+
+        throw_if(Config::first()->appVersionIsOutdated(), new ApiVersionOutdatedException());
     }
 }

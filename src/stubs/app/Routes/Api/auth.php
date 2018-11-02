@@ -12,6 +12,7 @@ Route::group(['prefix' => 'v1/auth'], function () {
      *      @SWG\Parameter(ref="#/parameters/apiKey"),
      *      @SWG\Parameter(ref="#/parameters/Language"),
      *      @SWG\Parameter(ref="#/parameters/os"),
+     *      @SWG\Parameter(ref="#/parameters/appVersion"),
      *      @SWG\Parameter(ref="#/parameters/Authorization"),
      *      @SWG\Response(response=HTTP_CODE_200_OK, description="User profile", @SWG\Schema(ref="#/definitions/UserProfileResource")),
      * )
@@ -28,6 +29,7 @@ Route::group(['prefix' => 'v1/auth'], function () {
      *      @SWG\Parameter(ref="#/parameters/apiKey"),
      *      @SWG\Parameter(ref="#/parameters/Language"),
      *      @SWG\Parameter(ref="#/parameters/os"),
+     *      @SWG\Parameter(ref="#/parameters/appVersion"),
      *      @SWG\Parameter(ref="#/parameters/Authorization"),
      *      @SWG\Parameter(name="body", in="body", @SWG\Schema(ref="#/definitions/UserUpdateRequest")),
      *      @SWG\Response(response=HTTP_CODE_200_OK, description="User profile", @SWG\Schema(ref="#/definitions/UserProfileResource")),
@@ -46,6 +48,7 @@ Route::group(['prefix' => 'v1/auth'], function () {
      *      @SWG\Parameter(ref="#/parameters/apiKey"),
      *      @SWG\Parameter(ref="#/parameters/Language"),
      *      @SWG\Parameter(ref="#/parameters/os"),
+     *      @SWG\Parameter(ref="#/parameters/appVersion"),
      *      @SWG\Parameter(ref="#/parameters/Authorization"),
      *      @SWG\Parameter(name="photo", in="formData", type="file", description="User photo"),
      *      @SWG\Response(response=HTTP_CODE_200_OK, description="User profile", @SWG\Schema(ref="#/definitions/UserProfileResource")),
@@ -63,6 +66,7 @@ Route::group(['prefix' => 'v1/auth'], function () {
      *      @SWG\Parameter(ref="#/parameters/apiKey"),
      *      @SWG\Parameter(ref="#/parameters/Language"),
      *      @SWG\Parameter(ref="#/parameters/os"),
+     *      @SWG\Parameter(ref="#/parameters/appVersion"),
      *      @SWG\Parameter(ref="#/parameters/Authorization"),
      *      @SWG\Parameter(name="body", in="body", @SWG\Schema(ref="#/definitions/UpdatePasswordRequest")),
      *      @SWG\Response(response=HTTP_CODE_200_OK, description="Password updated"),
@@ -80,6 +84,7 @@ Route::group(['prefix' => 'v1/auth'], function () {
      *      @SWG\Parameter(ref="#/parameters/apiKey"),
      *      @SWG\Parameter(ref="#/parameters/Language"),
      *      @SWG\Parameter(ref="#/parameters/os"),
+     *      @SWG\Parameter(ref="#/parameters/appVersion"),
      *      @SWG\Parameter(ref="#/parameters/Authorization"),
      *      @SWG\Parameter(name="body", in="body", @SWG\Schema(ref="#/definitions/UserAddOrUpdatePushTokenRequest")),
      *      @SWG\Response(response=HTTP_CODE_201_OK_CREATED, description="User's token (player id) added or updated"),
@@ -97,10 +102,11 @@ Route::group(['prefix' => 'v1/auth'], function () {
      *      @SWG\Parameter(ref="#/parameters/apiKey"),
      *      @SWG\Parameter(ref="#/parameters/Language"),
      *      @SWG\Parameter(ref="#/parameters/os"),
+     *      @SWG\Parameter(ref="#/parameters/appVersion"),
      *      @SWG\Parameter(ref="#/parameters/Authorization"),
      *      @SWG\Response(response=HTTP_CODE_200_OK, description="User deleted"),
      * )
      */
-    Route::delete('/', 'AuthController@destroy');
+    Route::delete('/', 'AuthController@destroy')->middleware('auth:api');
 
 });
