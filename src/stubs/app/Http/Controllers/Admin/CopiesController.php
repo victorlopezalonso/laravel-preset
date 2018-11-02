@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Classes\Excel;
 use App\Http\Controllers\ApiController;
+use App\Http\Requests\Headers;
 use App\Http\Resources\Admin\Copies\CopiesResource;
 use App\Models\Config;
 use App\Models\Copy;
@@ -55,8 +56,7 @@ class CopiesController extends ApiController
      */
     public function getAdminCopies()
     {
-        $lang = request()->query('lang');
-        return $this->response(Copy::where('type', ADMIN_COPY)->pluck($lang, 'key'));
+        return $this->response(Copy::where('type', ADMIN_COPY)->pluck(Headers::getLanguage(), 'key'));
     }
 
     /**

@@ -8,52 +8,42 @@ let CONSULTANT_USER = CONSTANTS.CONSULTANT_USER.permissions;
 
 let routes = [
     {
-        name_en: 'Home',
-        name_es: 'Inicio',
+        name: 'SECTION_HOME',
         path: '/',
         component: require('./components/Home'),
         meta: {
-            'description': 'Stats of the app',
             permissions: GENERIC_USER
         }
     },
     {
-        name_en: 'Settings',
-        name_es: 'Ajustes',
+        name: 'SECTION_SETTINGS',
         path: '/settings',
         component: require('./components/Config'),
         meta: {
-            'description': 'App settings',
             permissions: ROOT_USER
         }
     },
     {
-        name_en: 'Copies',
-        name_es: 'Copies',
+        name: 'SECTION_COPIES',
         path: '/copies',
         component: require('./components/Copies'),
         meta: {
-            'description': 'Texts of the client and server side',
             permissions: ADMIN_USER
         }
     },
     {
-        name_en: 'Users',
-        name_es: 'Usuarios',
+        name: 'SECTION_USERS',
         path: '/users',
         component: require('./components/Users'),
         meta: {
-            'description': 'Users administration page',
             permissions: ROOT_USER
         }
     },
     {
-        name_en: 'Pushes',
-        name_es: 'Pushes',
+        name: 'SECTION_PUSHES',
         path: '/pushes',
         component: require('./components/Pushes'),
         meta: {
-            'description': 'Push administration page',
             permissions: ROOT_USER
         }
     }

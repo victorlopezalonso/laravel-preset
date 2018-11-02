@@ -2,7 +2,7 @@
 
     <div class="container">
 
-        <chart type="pie" :label="CONSTANTS.getCopy('ADMIN_OPERATIVE_SYSTEMS')" :data="stats.os" :colors="colors.os"/>
+        <chart type="pie" :label="CONSTANTS.getCopy('ADMIN_OPERATING_SYSTEMS')" :data="stats.os" :colors="colors.os"/>
 
         <chart type="bar" :label="CONSTANTS.getCopy('ADMIN_GENDERS')" :data="stats.genders" :colors="colors.genders"/>
 
@@ -33,8 +33,6 @@
             this.api.get('/stats?lang=' + constants.language).then(response => {
                 this.stats = response.data;
             });
-
-            console.log(this.auth);
         }
     }
 </script>

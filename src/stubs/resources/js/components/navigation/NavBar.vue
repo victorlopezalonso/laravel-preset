@@ -28,7 +28,7 @@
                             :to="item.path"
                             class="navbar-item"
                             :class="{ 'is-active' : isActive(item)}">
-                        {{item.name}}
+                        {{CONSTANTS.getCopy(item.name)}}
                     </router-link>
 
                 </div>
@@ -54,11 +54,8 @@
         <section class="hero is-primary is-small">
             <div class="hero-body">
                 <p class="title">
-                    {{routeName}}
+                    {{CONSTANTS.getCopy($route.name)}}
                 </p>
-                <!--<p class="subtitle">-->
-                    <!--{{routeDescription}}-->
-                <!--</p>-->
             </div>
         </section>
 
@@ -84,7 +81,7 @@
 
         created() {
             this.user = window.App.user;
-            this.setRoutes();
+            this.setAdminCopies();
         },
 
         computed: {
@@ -95,10 +92,7 @@
                 return this.items;
             },
             routeName() {
-                return this.$route.name;
-            },
-            routeDescription() {
-                return this.$route.meta.description;
+                return constants.getCopy(this.$route.name);
             },
             hamburguerClass() {
                 return this.menuActive ? 'navbar-burger burger is-active' : 'navbar-burger burger';
@@ -126,20 +120,20 @@
             },
             setRoutes() {
                 this.$router.options.routes.forEach(route => {
+                    let isHidden = route.meta.hidden;
                     let isAllowedRoute = route.meta.permissions === this.CONSTANTS.GENERIC_USER.permissions;
                     let isGenericUser = this.user.permissions === this.CONSTANTS.GENERIC_USER.permissions;
                     let userHasEnoughPermissions = this.user.permissions <= route.meta.permissions;
 
-                    if (isAllowedRoute || (!isGenericUser && userHasEnoughPermissions)) {
-                        switch (constants.language){
-                            case 'es':
-                                this.items.push({name: route.name_es, path: route.path});
-                                break;
-                            case 'en':
-                                this.items.push({name: route.name_en, path: route.path});
-                                break;
-                        }
+                    if (!isHidden && (isAllowedRoute || (!isGenericUser && userHasEnoughPermissions))) {
+                        this.items.push({name: route.name, path: route.path});
                     }
+                });
+            },
+            setAdminCopies() {
+                this.api.get('/copies/admin').then(response => {
+                    constants.setCopies(response.data);
+                    this.setRoutes();
                 });
             }
         },
