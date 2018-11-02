@@ -27,14 +27,6 @@ class AppController extends ApiController
         /** @var Config $splash */
         $splash = Config::first();
 
-/*        if ($splash->appIsInMaintenance()) {
-            return $this->withMessage(APP_IN_MAINTENANCE)->withStatus(HTTP_CODE_503_SERVICE_UNAVAILABLE);
-        }
-
-        if ($splash->appVersionIsOutdated()) {
-            return $this->withMessage(APP_VERSION_OUTDATED)->withStatus(HTTP_CODE_426_UPGRADE_REQUIRED);
-        }*/
-
         return $this->response(new SplashResource($splash));
     }
 
