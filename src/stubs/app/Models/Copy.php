@@ -132,25 +132,28 @@ class Copy extends ApiModel
 
     /**
      * Update the columns of the table copies with the existing languages in the configuration
+     * @param bool $delete
      */
-    public static function updateLanguages()
+    public static function updateLanguages(bool $delete = false)
     {
         $languages = Config::languages();
-
+        
         foreach ($languages as $language) {
             Copy::addColumn($language, 'longText', ['after' => 'en', 'nullable' => true]);
         }
 
-//        $except = array_merge(API_DEFAULT_LANGUAGES, ['id', 'key', 'type', 'created_at', 'updated_at']);
-//
-//        $columnsToDrop = array_diff(self::getColumns(), $except);
-//
-//        foreach ($columnsToDrop as $column) {
-//
-//            if (!in_array($column, $languages) && !in_array($column, $except)) {
-//                self::dropColumn($column);
-//            }
-//        }
+        if ($delete) {
+            $except = array_merge(API_DEFAULT_LANGUAGES, ['id', 'key', 'type', 'created_at', 'updated_at']);
+
+            $columnsToDrop = array_diff(self::getColumns(), $except);
+
+            foreach ($columnsToDrop as $column) {
+
+                if (!in_array($column, $languages) && !in_array($column, $except)) {
+                    self::dropColumn($column);
+                }
+            }
+        }
     }
 
     /**
