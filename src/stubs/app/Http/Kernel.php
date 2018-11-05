@@ -42,7 +42,8 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:60,1',
             'bindings',
-            'api.headers'
+            'api.headers',
+            'api.app-in-maintenance',
         ],
     ];
 
@@ -61,6 +62,7 @@ class Kernel extends HttpKernel
         'guest'                      => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle'                   => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'api.headers'                => \App\Http\Middleware\CheckHeaders::class,
+        'api.app-in-maintenance'     => \App\Http\Middleware\AppIsInMaintenance::class,
         'auth.admin'                 => \App\Http\Middleware\IsAdmin::class,
         'auth.has-root-permissions'  => \App\Http\Middleware\HasRootPermissions::class,
         'auth.has-admin-permissions' => \App\Http\Middleware\HasAdminPermissions::class

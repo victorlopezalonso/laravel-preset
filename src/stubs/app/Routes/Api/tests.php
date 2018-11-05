@@ -12,6 +12,7 @@ Route::group(['prefix' => 'v1/tests'], function () {
      *      @SWG\Parameter(ref="#/parameters/apiKey"),
      *      @SWG\Parameter(ref="#/parameters/Language"),
      *      @SWG\Parameter(ref="#/parameters/os"),
+     *      @SWG\Parameter(ref="#/parameters/appVersion"),
      *      @SWG\Response(response=HTTP_CODE_200_OK, description="Test response")),
      * )
      */

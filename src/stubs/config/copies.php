@@ -678,7 +678,3 @@ return [
         ['key' => 'SECTION_USERS', 'es' => 'Usuarios', 'en' => 'Users'],
     ],
 ];
-
-
-
-
