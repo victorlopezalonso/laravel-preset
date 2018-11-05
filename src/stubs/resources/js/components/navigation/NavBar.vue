@@ -11,7 +11,7 @@
                     <!--<span class="icon"><i class="fas fa-user-secret fa-2x"></i></span>-->
                     <img src="../../../images/logo-dark.png" class="logo">
                 </a>
-                <div :class="hamburguerClass" @click="toggleHamburguer">
+                <div :class="hamburguerClass" style="color: #20c2ff;" @click="toggleHamburguer">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -33,7 +33,21 @@
 
                 </div>
 
-                <div class="navbar-end">
+                <div class="navbar-end" style="margin-left: 0;">
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">
+                            {{mainLanguage}}
+                        </a>
+                        <div class="navbar-dropdown is-boxed">
+                            <a v-for="(language,key) in languages" class="navbar-item" @click="setMainLanguage(key)">
+                                {{language}}
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="navbar-end" style="margin-left: 0;">
                     <div class="navbar-item has-dropdown is-hoverable">
                         <a class="navbar-link">
                             {{user.name}}
@@ -71,6 +85,8 @@
             return {
                 menuActive: false,
                 hide: true,
+                languages: null,
+                mainLanguage: null,
                 items: [],
                 user: {
                     'name': '',
@@ -82,6 +98,8 @@
         created() {
             this.user = window.App.user;
             this.setAdminCopies();
+            this.getLanguages();
+            this.mainLanguage = constants.getCopy('ADMIN_LANGUAGES');
         },
 
         computed: {
@@ -119,6 +137,7 @@
                 this.auth.logout();
             },
             setRoutes() {
+                this.items = [];
                 this.$router.options.routes.forEach(route => {
                     let isHidden = route.meta.hidden;
                     let isAllowedRoute = route.meta.permissions === this.CONSTANTS.GENERIC_USER.permissions;
@@ -135,6 +154,18 @@
                     constants.setCopies(response.data);
                     this.setRoutes();
                 });
+            },
+            getLanguages() {
+                this.api.get('/config/languages').then(response => {
+                    this.languages = response.data;
+                    console.log(this.languages);
+                    this.mainLanguage = this.languages[localStorage.getItem('language')];
+                });
+            },
+            setMainLanguage(language){
+                localStorage.setItem('language', language);
+                console.log('Idioma cambiado a: ' + localStorage.getItem('language'));
+                this.$router.go();
             }
         },
     }

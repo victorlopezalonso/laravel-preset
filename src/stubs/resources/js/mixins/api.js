@@ -51,7 +51,7 @@ export default {
                         headers: {
                             'Accept': 'application/json',
                             'apikey': ENV.headers.apiKey,
-                            'language': ENV.headers.language
+                            'language': localStorage.getItem('language')
                         },
                         data: data,
                         validateStatus() {

@@ -44,8 +44,6 @@ let setCopies = function(adminCopies){
     copies = adminCopies;
 };
 
-let language = 'es';
-
 export default {
 
     getUserType, hasRootPermissions,
@@ -55,7 +53,5 @@ export default {
     PERMISSIONS: [GENERIC_USER, ROOT_USER, ADMIN_USER, CONSULTANT_USER],
 
     COPY_TYPE, setCopies, getCopy, getCopies,
-
-    language,
 
 }

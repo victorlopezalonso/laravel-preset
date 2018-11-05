@@ -34,6 +34,16 @@ Vue.component('paginator', require('./components/navigation/Paginator'));
 // Vue Prototype override
 Vue.prototype.CONSTANTS = constants;
 
+//Local storage
+Storage.prototype.setObject = function (key, value) {
+    this.setItem(key, JSON.stringify(value));
+};
+
+Storage.prototype.getObject = function (key) {
+    let value = this.getItem(key);
+    return value && JSON.parse(value);
+};
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

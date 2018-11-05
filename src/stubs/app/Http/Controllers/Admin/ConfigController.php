@@ -28,7 +28,12 @@ class ConfigController extends ApiController
      */
     public function getLanguages()
     {
-        return $this->response(Config::languages());
+        $languages = [];
+        foreach (Config::languages() as $language) {
+            $languages[$language] = Copy::server(LANGUAGES[$language]);
+        }
+
+        return $this->response($languages);
     }
 
     /**
