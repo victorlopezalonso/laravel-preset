@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\ApiController;
+use App\Http\Requests\Headers;
 use App\Models\User;
 
 class StatsController extends ApiController
@@ -14,10 +15,9 @@ class StatsController extends ApiController
      */
     public function getStats()
     {
-        $lang = request()->query('lang');
         $response = [
-            'os'      => $this->statsByOs($lang),
-            'genders' => $this->statsByGender($lang),
+            'os'      => $this->statsByOs(Headers::getLanguage()),
+            'genders' => $this->statsByGender(Headers::getLanguage()),
         ];
 
         return $this->response($response);
