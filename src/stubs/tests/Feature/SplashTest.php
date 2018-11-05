@@ -58,15 +58,26 @@ class SplashTest extends ApiTestCase
     }
 
     /** @test */
-    public function splash_with_app_in_maintenance_returns_503()
+    public function splash__returns_correct_resource()
     {
         $this->setHeader(APP_VERSION_HEADER, Config::first()->ios_version);
 
-        Config::first()->update(['app_in_maintenance' => true]);
-
-        $this->apiCall('get', 'api/v1/app/splash')->assertStatus(HTTP_CODE_503_SERVICE_UNAVAILABLE);
-
-        $this->assertMessage(APP_IN_MAINTENANCE);
+        $this->apiCall('get', 'api/v1/app/splash')->assertStatus(HTTP_CODE_200_OK)
+        ->assertSee('language')
+        ->assertSee('copiesUpdatedAt')
+        ->assertSee('contactMail')
+        ->assertSee('faqUrl')
+        ->assertSee('termsUrl')
+        ->assertSee('privacyUrl')
+        ->assertSee('deeplinkUrl')
+        ->assertSee('linkedinUrl')
+        ->assertSee('twitterUrl')
+        ->assertSee('facebookUrl')
+        ->assertSee('instagramUrl')
+        ->assertSee('youtubeUrl')
+        ->assertSee('webUrl')
+        ->assertSee('languages')
+        ->assertSee('copies');
     }
 
 }

@@ -14,15 +14,21 @@ class ConfigUpdateRequest extends ApiRequest
     public function rules()
     {
         return [
-            'appInMaintenance' => 'required|boolean',
-            'androidVersion'   => 'required',
-            'iosVersion'       => 'required',
-            'languages'        => 'required',
-            'contactMail'      => 'nullable',
-            'faqUrl'           => 'nullable',
-            'termsUrl'         => 'nullable',
-            'privacyUrl'       => 'nullable',
-            'deepLinkUrl'      => 'nullable',
+            'appInMaintenance'    => 'required|boolean',
+            'androidVersion'      => 'required',
+            'iosVersion'          => 'required',
+            'languages'           => 'required',
+            'contactMail'         => 'nullable',
+            'faqUrl'              => 'nullable',
+            'termsUrl'            => 'nullable',
+            'privacyUrl'          => 'nullable',
+            'deeplinkUrl'         => 'nullable',
+            'linkedinUrl'         => 'nullable',
+            'twitterUrl'          => 'nullable',
+            'facebookUrl'         => 'nullable',
+            'instagramUrl'        => 'nullable',
+            'youtubeUrl'          => 'nullable',
+            'webUrl'              => 'nullable',
         ];
     }
 }

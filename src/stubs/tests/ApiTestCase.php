@@ -13,7 +13,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
  * @internal
  * @coversNothing
  */
-final class ApiTestCase extends TestCase
+class ApiTestCase extends TestCase
 {
     use DatabaseTransactions;
 
