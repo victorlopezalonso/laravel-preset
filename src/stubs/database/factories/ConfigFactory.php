@@ -9,7 +9,7 @@ $factory->define(\App\Models\Config::class, function (Faker $faker) {
     }
 
     return [
-        'android_version' => '0.0.1',
+        'android_version' => '1',
         'ios_version'     => '0.0.1',
         'languages'       => $languages ?? null
     ];

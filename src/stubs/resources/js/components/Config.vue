@@ -79,8 +79,56 @@
         <div class="field">
             <label class="label">{{CONSTANTS.getCopy('ADMIN_DEEPLINK')}}</label>
             <div class="control has-icons-left">
-                <input class="input" type="email" placeholder="" v-model="config.deepLinkUrl">
+                <input class="input" type="email" placeholder="" v-model="config.deeplinkUrl">
                 <span class="icon is-small is-left"><i class="fas fa-link fa-lg"></i></span>
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">{{CONSTANTS.getCopy('ADMIN_LINKEDIN_URL')}}</label>
+            <div class="control has-icons-left">
+                <input class="input" type="email" placeholder="" v-model="config.linkedinUrl">
+                <span class="icon is-small is-left"><i class="fab fa-linkedin fa-lg"></i></span>
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">{{CONSTANTS.getCopy('ADMIN_TWITTER_URL')}}</label>
+            <div class="control has-icons-left">
+                <input class="input" type="email" placeholder="" v-model="config.twitterUrl">
+                <span class="icon is-small is-left"><i class="fab fa-twitter fa-lg"></i></span>
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">{{CONSTANTS.getCopy('ADMIN_FACEBOOK_URL')}}</label>
+            <div class="control has-icons-left">
+                <input class="input" type="email" placeholder="" v-model="config.facebookUrl">
+                <span class="icon is-small is-left"><i class="fab fa-facebook fa-lg"></i></span>
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">{{CONSTANTS.getCopy('ADMIN_INSTAGRAM_URL')}}</label>
+            <div class="control has-icons-left">
+                <input class="input" type="email" placeholder="" v-model="config.instagramUrl">
+                <span class="icon is-small is-left"><i class="fab fa-instagram fa-lg"></i></span>
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">{{CONSTANTS.getCopy('ADMIN_YOUTUBE_URL')}}</label>
+            <div class="control has-icons-left">
+                <input class="input" type="email" placeholder="" v-model="config.youtubeUrl">
+                <span class="icon is-small is-left"><i class="fab fa-youtube fa-lg"></i></span>
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">{{CONSTANTS.getCopy('ADMIN_WEB_URL')}}</label>
+            <div class="control has-icons-left">
+                <input class="input" type="email" placeholder="" v-model="config.webUrl">
+                <span class="icon is-small is-left"><i class="fas fa-globe fa-lg"></i></span>
             </div>
         </div>
 
@@ -123,7 +171,13 @@
                     faqUrl: null,
                     termsUrl: null,
                     privacyUrl: null,
-                    deepLinkUrl: null
+                    deeplinkUrl: null,
+                    linkedinUrl: null,
+                    twitterUrl: null,
+                    facebookUrl: null,
+                    instagramUrl: null,
+                    youtubeUrl: null,
+                    webUrl: null,
                 }
             };
         },
