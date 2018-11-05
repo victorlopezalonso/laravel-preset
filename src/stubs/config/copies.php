@@ -671,5 +671,10 @@ return [
         ['key' => 'ADMIN_ACCEPT', 'es' => 'Aceptar', 'en' => 'Accept'],
         ['key' => 'ADMIN_PASSWORD', 'es' => 'Contraseña', 'en' => 'Password'],
         ['key' => 'ADMIN_SEARCH', 'es' => 'buscar', 'en' => 'search'],
+        ['key' => 'SECTION_HOME', 'es' => 'Inicio', 'en' => 'Home'],
+        ['key' => 'SECTION_SETTINGS', 'es' => 'Configuraciones', 'en' => 'Settings'],
+        ['key' => 'SECTION_COPIES', 'es' => 'Copies', 'en' => 'Copies'],
+        ['key' => 'SECTION_VARIABLES', 'es' => 'Variables', 'en' => 'Variables'],
+        ['key' => 'SECTION_USERS', 'es' => 'Usuarios', 'en' => 'Users'],
     ],
 ];

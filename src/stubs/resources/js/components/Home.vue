@@ -33,8 +33,6 @@
             this.api.get('/stats?lang=' + constants.language).then(response => {
                 this.stats = response.data;
             });
-
-            console.log(this.auth);
         }
     }
 </script>

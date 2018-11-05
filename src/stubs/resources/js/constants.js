@@ -41,10 +41,7 @@ let getCopies = function(){
 };
 
 let setCopies = function(adminCopies){
-    console.log(copies); //si esto no devuelve 'prueba' estamos jodidos
     copies = adminCopies;
-    console.log(copies); //debería cambiar...
-    console.log(getCopy('ADMIN_TEXT'));
 };
 
 let language = 'es';
