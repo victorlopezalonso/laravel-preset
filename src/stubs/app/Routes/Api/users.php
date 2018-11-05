@@ -12,6 +12,7 @@ Route::group(['prefix' => 'v1/users'], function () {
      *     @SWG\Parameter(ref="#/parameters/apiKey"),
      *     @SWG\Parameter(ref="#/parameters/Language"),
      *     @SWG\Parameter(ref="#/parameters/os"),
+     *     @SWG\Parameter(ref="#/parameters/appVersion"),
      *     @SWG\Parameter(name="body", in="body", @SWG\Schema(ref="#/definitions/UserRegisterRequest")),
      *     @SWG\Response(response=HTTP_CODE_201_OK_CREATED, description="User created", @SWG\Schema(ref="#/definitions/UserProfileResource")),
      *     @SWG\Response(response=HTTP_CODE_202_OK_ACCEPTED, description="User registered, verification needed"),
@@ -29,6 +30,7 @@ Route::group(['prefix' => 'v1/users'], function () {
      *     @SWG\Parameter(ref="#/parameters/apiKey"),
      *     @SWG\Parameter(ref="#/parameters/Language"),
      *     @SWG\Parameter(ref="#/parameters/os"),
+     *     @SWG\Parameter(ref="#/parameters/appVersion"),
      *     @SWG\Parameter(name="body", in="body", @SWG\Schema(ref="#/definitions/UserSendResetLinkEmailRequest")),
      *     @SWG\Response(response=HTTP_CODE_202_OK_ACCEPTED, description="Email sent"),
      * )
@@ -45,6 +47,7 @@ Route::group(['prefix' => 'v1/users'], function () {
      *      @SWG\Parameter(ref="#/parameters/apiKey"),
      *      @SWG\Parameter(ref="#/parameters/Language"),
      *      @SWG\Parameter(ref="#/parameters/os"),
+     *      @SWG\Parameter(ref="#/parameters/appVersion"),
      *      @SWG\Parameter(name="id", in="path", type="string"),
      *      @SWG\Response(response=HTTP_CODE_200_OK, description="Users", @SWG\Schema(ref="#/definitions/UserPublicProfileResource")),
      * )

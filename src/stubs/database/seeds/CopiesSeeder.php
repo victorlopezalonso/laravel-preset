@@ -13,7 +13,8 @@ class CopiesSeeder extends Seeder
     public function run()
     {
         App\Models\Copy::insertMany(config('copies.server'), ['type' => SERVER_COPY]);
-        App\Models\Copy::insertMany(config('copies.client'));
+        App\Models\Copy::insertMany(config('copies.client'), ['type' => CLIENT_COPY]);
+        App\Models\Copy::insertMany(config('copies.admin'), ['type' => ADMIN_COPY]);
     }
 
 }

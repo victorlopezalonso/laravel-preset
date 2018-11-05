@@ -2,7 +2,7 @@
 
     <div class="container">
 
-        <chart type="pie" :label="CONSTANTS.getCopy('ADMIN_OPERATIVE_SYSTEMS')" :data="stats.os" :colors="colors.os"/>
+        <chart type="pie" :label="CONSTANTS.getCopy('ADMIN_OPERATING_SYSTEMS')" :data="stats.os" :colors="colors.os"/>
 
         <chart type="bar" :label="CONSTANTS.getCopy('ADMIN_GENDERS')" :data="stats.genders" :colors="colors.genders"/>
 
