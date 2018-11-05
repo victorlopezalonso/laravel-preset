@@ -159,7 +159,7 @@
                 this.api.get('/config/languages').then(response => {
                     this.languages = response.data;
                     console.log(this.languages);
-                    this.mainLanguage = this.languages[localStorage.getItem('language')];
+                    this.mainLanguage = this.languages[localStorage.getItem('language')] != null ? this.languages[localStorage.getItem('language')] : constants.getCopy('ADMIN_LANGUAGES');
                 });
             },
             setMainLanguage(language){
