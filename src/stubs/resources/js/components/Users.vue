@@ -106,8 +106,10 @@
                 });
             },
             deleteUser(user) {
-                this.api.delete('/users/' + user.id).then(() => {
-                    this.goToPage(this.paginator.current)
+                this.$dialog.confirm(this.CONSTANTS.getCopy('ADMIN_DELETE_CONFIRM')).then(() => {
+                    this.api.delete('/users/' + user.id).then(() => {
+                        this.goToPage(this.paginator.current)
+                    });
                 });
             },
             navigatePrev(page) {

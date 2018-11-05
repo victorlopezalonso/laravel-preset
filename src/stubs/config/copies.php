@@ -641,6 +641,7 @@ return [
         ['key' => 'ADMIN_SAVE', 'es' => 'guardar', 'en' => 'save'],
         ['key' => 'ADMIN_NEXT_PAGE', 'es' => 'siguiente', 'en' => 'next page'],
         ['key' => 'ADMIN_PREVIOUS_PAGE', 'es' => 'anterior', 'en' => 'previous'],
+        ['key' => 'ADMIN_DELETE_CONFIRM', 'es' => 'Estás seguro que quieres borrar este elemento?', 'en' => 'Are you sure you want to delete this item?'],
 
         //HOME
         ['key' => 'ADMIN_OPERATING_SYSTEMS', 'es' => 'Sistemas operativos', 'en' => 'Operating systems'],
@@ -670,6 +671,7 @@ return [
         ['key' => 'ADMIN_COPY', 'es' => 'texto', 'en' => 'text'],
         ['key' => 'IMPORT_FROM_FILE', 'es' => 'importar desde archivo', 'en' => 'import from file'],
         ['key' => 'DOWNLOAD_INTO_FILE', 'es' => 'descargar a un archivo', 'en' => 'download to a file'],
+
 
         //USERS
         ['key' => 'ADMIN_USER', 'es' => 'usuario', 'en' => 'user'],

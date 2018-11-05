@@ -18,11 +18,19 @@ import VueRouter from 'vue-router';
 import api from './mixins/api'
 import auth from './mixins/auth'
 import constants from './constants'
+import VuejsDialog from 'vuejs-dialog';
+import 'vuejs-dialog/dist/vuejs-dialog.min.css';
 
 // Vue injections
 Vue.use(api);
 Vue.use(auth);
 Vue.use(VueRouter);
+Vue.use(VuejsDialog, {
+    okText: 'Ok',
+    cancelText: 'Cancel',
+    animation: 'fade',
+    backdropClose: true
+});
 
 // Vue components
 Vue.component('confirm', require('./components/dialogs/Confirm'));
