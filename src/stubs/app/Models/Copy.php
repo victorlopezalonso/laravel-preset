@@ -141,16 +141,16 @@ class Copy extends ApiModel
             Copy::addColumn($language, 'longText', ['after' => 'en', 'nullable' => true]);
         }
 
-        $except = array_merge(API_DEFAULT_LANGUAGES, ['id', 'key', 'type', 'created_at', 'updated_at']);
-
-        $columnsToDrop = array_diff(self::getColumns(), $except);
-
-        foreach ($columnsToDrop as $column) {
-
-            if (!in_array($column, $languages) && !in_array($column, $except)) {
-                self::dropColumn($column);
-            }
-        }
+//        $except = array_merge(API_DEFAULT_LANGUAGES, ['id', 'key', 'type', 'created_at', 'updated_at']);
+//
+//        $columnsToDrop = array_diff(self::getColumns(), $except);
+//
+//        foreach ($columnsToDrop as $column) {
+//
+//            if (!in_array($column, $languages) && !in_array($column, $except)) {
+//                self::dropColumn($column);
+//            }
+//        }
     }
 
     /**
