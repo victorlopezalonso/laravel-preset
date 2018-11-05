@@ -30,7 +30,7 @@
         },
 
         mounted() {
-            this.api.get('/stats?lang=' + constants.language).then(response => {
+            this.api.get('/stats').then(response => {
                 this.stats = response.data;
             });
         }
