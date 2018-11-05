@@ -131,9 +131,12 @@
                     <!-- server/client icon -->
                     <div class="level-item">
                         <p>
-                            <span class="icon" v-if="copy.type === CONSTANTS.COPY_TYPE.SERVER"><i class="fas fa-database fa-2x"></i></span>
-                            <span class="icon" v-else-if="copy.type === CONSTANTS.COPY_TYPE.CLIENT"><i class="fas fa-mobile fa-2x"></i></span>
-                            <span class="icon" v-else-if="copy.type === CONSTANTS.COPY_TYPE.ADMIN"><i class="fas fa-user-secret fa-2x"></i></span>
+                            <span class="icon" v-if="copy.type === CONSTANTS.COPY_TYPE.SERVER"><i
+                                    class="fas fa-database fa-2x"></i></span>
+                            <span class="icon" v-else-if="copy.type === CONSTANTS.COPY_TYPE.CLIENT"><i
+                                    class="fas fa-mobile fa-2x"></i></span>
+                            <span class="icon" v-else-if="copy.type === CONSTANTS.COPY_TYPE.ADMIN"><i
+                                    class="fas fa-user-secret fa-2x"></i></span>
                         </p>
                     </div>
 
@@ -220,14 +223,12 @@
         },
 
         watch: {
-            copyType: function() {
+            copyType: function () {
                 this.getCopies(1);
             }
         },
 
-        computed: {
-
-        },
+        computed: {},
 
         methods: {
             isEditing(copy) {
@@ -253,7 +254,7 @@
             },
             getCopies(page) {
                 let $querys = '?type=' + this.copyType + '&page=' + page + '&limit=' + this.paginator.limit;
-                if(this.textFilter) {
+                if (this.textFilter) {
                     $querys += '&search=' + this.textFilter;
                 }
                 this.api.get('/copies' + $querys).then(response => {
@@ -291,15 +292,18 @@
                     });
             },
             deleteCopy(copy) {
-                this.api.delete('/copies/' + copy.id)
-                    .then(() => {
-                        this.copies.find((object, index) => {
-                            if (object.key === copy.key) {
-                                this.copies.splice(index, 1);
-                                return true; // stop searching
-                            }
+                this.$dialog.confirm(this.CONSTANTS.getCopy('ADMIN_DELETE_CONFIRM')).then(() => {
+                    this.api.delete('/copies/' + copy.id)
+                        .then(() => {
+                            this.copies.find((object, index) => {
+                                if (object.key === copy.key) {
+                                    this.copies.splice(index, 1);
+                                    return true; // stop searching
+                                }
+                            });
                         });
-                    });
+                });
+
             },
             uploadExcel() {
                 let files = this.$refs.import.files;
