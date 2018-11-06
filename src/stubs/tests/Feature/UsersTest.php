@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use App\Classes\Facebook;
+use App\Classes\Google;
 use App\Models\User;
 use App\Models\Config;
 use App\Models\Folder;
 use Tests\ApiTestCase;
+use GuzzleHttp\Client;
 
 class UsersTest extends ApiTestCase
 {
