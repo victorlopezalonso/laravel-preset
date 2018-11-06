@@ -60,6 +60,7 @@
         methods: {
             save() {
                 this.$emit('save', this.data);
+                this.data = new User();
             },
             close() {
                 this.data = new User();

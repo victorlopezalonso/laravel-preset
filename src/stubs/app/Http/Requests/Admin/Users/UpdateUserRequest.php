@@ -14,10 +14,21 @@ class UpdateUserRequest extends ApiRequest
     public function rules()
     {
         return [
-            'name'        => 'required',
-            'lastname'    => 'nullable',
-            'email'       => 'required|email',
-            'permissions' => 'required',
+            'name'                  => 'nullable',
+            'lastname'              => 'nullable',
+            'email'                 => 'nullable|email',
+            'permissions'           => 'nullable',
+            'birthDate'             => 'nullable',
+            'address'               => 'nullable',
+            'city'                  => 'nullable',
+            'country'               => 'nullable',
+            'postcode'              => 'nullable',
+            'identificationNumber'  => 'nullable',
+            'gender'                => 'nullable',
+            'photo'                 => 'nullable',
+            'facebookUrl'           => 'nullable',
+            'twitterUrl'            => 'nullable',
+            'instagramUrl'          => 'nullable',
         ];
     }
 }

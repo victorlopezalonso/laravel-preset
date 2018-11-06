@@ -14,11 +14,23 @@ class CreateUserRequest extends ApiRequest
     public function rules()
     {
         return [
-            'name'        => 'required',
-            'email'       => 'email',
-            'password'    => 'nullable',
-            'permissions' => 'nullable',
-            'isAdmin'     => 'nullable',
+            'name'                  => 'required',
+            'email'                 => 'email',
+            'password'              => 'nullable',
+            'permissions'           => 'nullable',
+            'isAdmin'               => 'nullable',
+            'lastname'              => 'nullable',
+            'birthDate'             => 'nullable',
+            'address'               => 'nullable',
+            'city'                  => 'nullable',
+            'country'               => 'nullable',
+            'postcode'              => 'nullable',
+            'identificationNumber'  => 'nullable',
+            'gender'                => 'nullable',
+            'photo'                 => 'nullable',
+            'facebookUrl'           => 'nullable',
+            'twitterUrl'            => 'nullable',
+            'instagramUrl'          => 'nullable',
         ];
     }
 }

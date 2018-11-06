@@ -56,9 +56,10 @@ class Preset extends LaravelPreset
     public static function updatePackageArray($packages)
     {
         $includedPackages = [
-            'bulma'      => '^0.6.2',
-            'chart.js'   => '2.7.1',
-            'vue-router' => '^3.0.1'
+            'bulma'			=> '^0.6.2',
+            'chart.js'		=> '2.7.1',
+            'vue-router'	=> '^3.0.1',
+            "vuejs-dialog"	=> "^1.3.0"
         ];
         $excludedPackages = [
             'bootstrap',
