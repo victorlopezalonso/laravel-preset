@@ -12,7 +12,8 @@ let routes = [
         path: '/',
         component: require('./components/Home'),
         meta: {
-            permissions: GENERIC_USER
+            permissions: GENERIC_USER,
+            hidden: false
         }
     },
     {
@@ -20,7 +21,8 @@ let routes = [
         path: '/settings',
         component: require('./components/Config'),
         meta: {
-            permissions: ROOT_USER
+            permissions: ROOT_USER,
+            hidden: false
         }
     },
     {
@@ -28,7 +30,8 @@ let routes = [
         path: '/copies',
         component: require('./components/Copies'),
         meta: {
-            permissions: ADMIN_USER
+            permissions: ADMIN_USER,
+            hidden: false
         }
     },
     {
@@ -36,7 +39,18 @@ let routes = [
         path: '/users',
         component: require('./components/Users'),
         meta: {
-            permissions: ROOT_USER
+            permissions: ROOT_USER,
+            hidden: false
+        }
+    },
+    {
+        name: 'SECTION_USER_DETAILS',
+        path: '/users/:id',
+        component: require('./components/users/UserProfile'),
+        meta: {
+            'description': 'Detalles del usuario',
+            permissions: ADMIN_USER,
+            hidden: true
         }
     },
     {
@@ -44,7 +58,8 @@ let routes = [
         path: '/pushes',
         component: require('./components/Pushes'),
         meta: {
-            permissions: ROOT_USER
+            permissions: ROOT_USER,
+            hidden: false
         }
     }
 ];

@@ -24,6 +24,7 @@
                 <th class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_PERMISSIONS')}}</th>
                 <th></th>
                 <th></th>
+                <th></th>
             </tr>
             </thead>
 
@@ -35,14 +36,20 @@
                 <td>{{user.isAdmin ? 'yes' : 'no'}}</td>
                 <td>{{userPermissions(user)}}</td>
                 <td>
-                    <div class="button is-info" @click="editUser(user)">
-                        <span class="icon"><i class="far fa-edit"></i></span>
+                    <div class="button is-primary" @click="showUser(user)">
+                        <span class="icon"><i class="fas fa-user"></i></span>
+                        <span class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_PROFILE')}}</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="button is-warning" @click="editUser(user)">
+                        <span class="icon"><i class="fas fa-edit"></i></span>
                         <span class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_EDIT')}}</span>
                     </div>
                 </td>
                 <td>
                     <div class="button is-danger" @click="deleteUser(user)">
-                        <span class="icon"><i class="far fa-trash-alt"></i></span>
+                        <span class="icon"><i class="fas fa-trash-alt"></i></span>
                         <span class="is-capitalized">{{CONSTANTS.getCopy('ADMIN_DELETE')}}</span>
                     </div>
                 </td>
@@ -53,20 +60,17 @@
 
         <paginator :paginator="paginator" v-on:prev="navigatePrev" v-on:next="navigateNext"/>
 
-        <update-profile :data="user" :show="showUpdateModal" v-on:save="updateUser" v-on:close="showUpdateModal=false"/>
-
     </div>
 
 </template>
 
 <script>
 
-    import UpdateProfile from './users/UpdateProfile';
     import CreateUser from './users/CreateUser';
     import User from '../models/user';
 
     export default {
-        components: {UpdateProfile, CreateUser},
+        components: {CreateUser},
         data() {
             return {
                 showUpdateModal: false,
@@ -95,9 +99,11 @@
                     this.goToPage(this.paginator.current);
                 });
             },
+            showUser(user) {
+                this.$router.push({path: '/users/' + user.id});
+            },
             editUser(user) {
-                this.user = JSON.parse(JSON.stringify(user));
-                this.showUpdateModal = true;
+                this.$router.push({path: '/users/' + user.id, query: {edit: true}});
             },
             updateUser(user) {
                 this.showUpdateModal = false;

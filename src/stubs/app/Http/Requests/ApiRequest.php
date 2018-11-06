@@ -164,6 +164,17 @@ class ApiRequest extends FormRequest
     }
 
     /**
+     * Return the array except some params with camelcase keys transformed to underscore
+     *
+     * @param array $params
+     * @return array|string
+     */
+    public function ignoreParams(...$params)
+    {
+        return camel_to_underscore($this->except($params), true) ?? null;
+    }
+
+    /**
      * @param $key
      *
      * @return array|mixed

@@ -425,7 +425,7 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
             $request->set('password', bcrypt($password));
         }
 
-        $params = $password ? $request->params() : $request->only('name', 'email');
+        $params = $password ? $request->ignoreParams('photo') : $request->only('name', 'email');
 
         $this->update($params);
     }

@@ -18,19 +18,25 @@ class UserProfileResource extends Resource
     {
         // @var User $this
         return [
-            'id'                   => $this->id,
-            'uuid'                 => $this->uuid,
-            'name'                 => $this->name,
-            'lastname'             => $this->lastname,
-            'email'                => $this->email,
-            'birthDate'            => $this->birthdate,
-            'address'              => $this->address,
-            'city'                 => $this->city,
-            'postcode'             => $this->postcode,
-            'identificationNumber' => $this->identification_number,
-            'permissions'          => $this->permissions,
-            'isAdmin'              => $this->is_admin,
-            'authorization'        => $this->when($this->authorization, $this->authorization),
+            'id'                    => $this->id,
+            'uuid'                  => $this->uuid,
+            'name'                  => $this->name,
+            'lastname'              => $this->lastname,
+            'email'                 => $this->email,
+            'birthdate'             => $this->birthdate,
+            'address'               => $this->address,
+            'city'                  => $this->city,
+            'country'               => $this->country,
+            'postcode'              => $this->postcode,
+            'identificationNumber'  => $this->identification_number,
+            'gender'                => $this->gender,
+            'photo'                 => $this->photo,
+            'facebookUrl'           => $this->facebook_url,
+            'twitterUrl'            => $this->twitter_url,
+            'instagramUrl'          => $this->instagram_url,
+            'permissions'           => $this->permissions,
+            'isAdmin'               => $this->is_admin,
+            'authorization'         => $this->when($this->authorization, $this->authorization),
         ];
     }
 }
