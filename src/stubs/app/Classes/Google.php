@@ -20,6 +20,10 @@ class Google implements SocialNetWorkInterface
      */
     public static function getProfile(string $accesToken): SocialNetworkUser
     {
+        if (TESTING_ENVIRONMENT === env('APP_ENV')) {
+            return SocialNetworkUser::getFakeUser();
+        }
+
         $http = new Client();
 
         $response = $http->request('GET', self::OPEN_GRAPH_URL, [

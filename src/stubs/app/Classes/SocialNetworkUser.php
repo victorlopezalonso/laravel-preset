@@ -11,6 +11,18 @@ class SocialNetworkUser
     protected $photo;
 
     /**
+     * @return SocialNetworkUser
+     */
+    public static function getFakeUser()
+    {
+        return (new self())->setId('000000000000000000')
+                ->setName('name')
+                ->setLastName('lastname')
+                ->setEmail('fakeemail@example.org')
+                ->setPhoto('https://via.placeholder.com/640');
+    }
+
+    /**
      * @return string
      */
     public function getId()

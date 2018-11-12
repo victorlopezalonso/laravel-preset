@@ -2,13 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Classes\Facebook;
-use App\Classes\Google;
 use App\Models\User;
 use App\Models\Config;
 use App\Models\Folder;
 use Tests\ApiTestCase;
-use GuzzleHttp\Client;
 
 class UsersTest extends ApiTestCase
 {
@@ -33,11 +30,13 @@ class UsersTest extends ApiTestCase
 
         $this->apiCall('post', 'api/v1/users')
              ->assertStatus(HTTP_CODE_422_UNPROCESSABLE_ENTITY)
-             ->assertSee('facebookId');
+             ->assertSee('accessToken');
 
         $this->params['type'] = 3;
 
-        $this->apiCall('post', 'api/v1/users')->assertStatus(HTTP_CODE_422_UNPROCESSABLE_ENTITY)->assertSee('googleId');
+        $this->apiCall('post', 'api/v1/users')
+             ->assertStatus(HTTP_CODE_422_UNPROCESSABLE_ENTITY)
+             ->assertSee('accessToken');
     }
 
     /** @test
@@ -74,9 +73,8 @@ class UsersTest extends ApiTestCase
     public function registration_with_facebook()
     {
         $this->params = [
-            'type'       => 2,
-            'email'      => 'nonexisting@email.com',
-            'facebookId' => '000000000000000000',
+            'type'        => 2,
+            'accessToken' => '123456789',
         ];
 
         $this->apiCall('post', 'api/v1/users');
@@ -86,7 +84,7 @@ class UsersTest extends ApiTestCase
 
             $this->assertMessage('USER_REGISTER_CONFIRM');
 
-            $this->assertSeeMailTo('nonexisting@email.com');
+            $this->assertSeeMailTo('fakeemail@example.org');
         } else {
             $this->testResponse->assertStatus(HTTP_CODE_201_OK_CREATED)->assertSee('authorization');
 
@@ -100,9 +98,8 @@ class UsersTest extends ApiTestCase
     public function registration_with_google()
     {
         $this->params = [
-            'type'     => 3,
-            'email'    => 'nonexisting@email.com',
-            'googleId' => '000000000000000000',
+            'type'        => 3,
+            'accessToken' => '000000000000000000',
         ];
 
         $this->apiCall('post', 'api/v1/users');
@@ -112,7 +109,7 @@ class UsersTest extends ApiTestCase
 
             $this->assertMessage('USER_REGISTER_CONFIRM');
 
-            $this->assertSeeMailTo('nonexisting@email.com');
+            $this->assertSeeMailTo('fakeemail@example.org');
         } else {
             $this->testResponse->assertStatus(HTTP_CODE_201_OK_CREATED)->assertSee('authorization');
 
