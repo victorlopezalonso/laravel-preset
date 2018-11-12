@@ -222,14 +222,14 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
      */
     public static function registerWithFacebook(UserRegisterRequest $request)
     {
-        $facebookUser = Facebook::getProfile($request->get('accessToken'));
+        $socialNetworkUser = Facebook::getProfile($request->get('accessToken'));
 
         $user = static::create([
-            'facebook_id' => $facebookUser->getId(),
-            'email'       => $facebookUser->getEmail(),
-            'name'        => $facebookUser->getName(),
-            'lastname'    => $facebookUser->getLastName(),
-            'photo'       => $facebookUser->getPhoto(),
+            'facebook_id' => $socialNetworkUser->getId(),
+            'email'       => $socialNetworkUser->getEmail(),
+            'name'        => $socialNetworkUser->getName(),
+            'lastname'    => $socialNetworkUser->getLastName(),
+            'photo'       => $socialNetworkUser->getPhoto(),
         ]);
 
         if (USER_MUST_VERIFY_EMAIL) {
@@ -251,14 +251,14 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
      */
     public static function registerWithGoogle(UserRegisterRequest $request)
     {
-        $facebookUser = Google::getProfile($request->get('accessToken'));
+        $socialNetworkUser = Google::getProfile($request->get('accessToken'));
 
         $user = static::create([
-            'google_id'   => $facebookUser->getId(),
-            'email'       => $facebookUser->getEmail(),
-            'name'        => $facebookUser->getName(),
-            'lastname'    => $facebookUser->getLastName(),
-            'photo'       => $facebookUser->getPhoto(),
+            'google_id'   => $socialNetworkUser->getId(),
+            'email'       => $socialNetworkUser->getEmail(),
+            'name'        => $socialNetworkUser->getName(),
+            'lastname'    => $socialNetworkUser->getLastName(),
+            'photo'       => $socialNetworkUser->getPhoto(),
         ]);
 
         if (USER_MUST_VERIFY_EMAIL) {
@@ -309,23 +309,23 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
      */
     public static function loginWithFacebook(UserLoginRequest $request)
     {
-        $facebookUser = Facebook::getProfile($request->get('accessToken'));
+        $socialNetworkUser = Facebook::getProfile($request->get('accessToken'));
 
         /** @var self $user */
-        $user = static::where(['email' => $facebookUser->getEmail(), ['email', '!=', null]])
-            ->orWhere('facebook_id', $facebookUser->getId())->first();
+        $user = static::where(['email' => $socialNetworkUser->getEmail(), ['email', '!=', null]])
+            ->orWhere('facebook_id', $socialNetworkUser->getId())->first();
 
         if (! $user) {
             $user = static::create([
-                'facebook_id' => $facebookUser->getId(),
-                'email'       => $facebookUser->getEmail(),
-                'name'        => $facebookUser->getName(),
-                'lastname'    => $facebookUser->getLastName(),
-                'photo'       => $facebookUser->getPhoto(),
+                'facebook_id' => $socialNetworkUser->getId(),
+                'email'       => $socialNetworkUser->getEmail(),
+                'name'        => $socialNetworkUser->getName(),
+                'lastname'    => $socialNetworkUser->getLastName(),
+                'photo'       => $socialNetworkUser->getPhoto(),
             ]);
         }
 
-        $user->update(['facebook_id' => $facebookUser->getId()]);
+        $user->update(['facebook_id' => $socialNetworkUser->getId()]);
 
         $user->generateToken();
 
@@ -344,23 +344,23 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
      */
     public static function loginWithGoogle(UserLoginRequest $request)
     {
-        $facebookUser = Google::getProfile($request->get('accessToken'));
+        $socialNetworkUser = Google::getProfile($request->get('accessToken'));
 
         /** @var self $user */
-        $user = static::where(['email' => $facebookUser->getEmail(), ['email', '!=', null]])
-            ->orWhere('google_id', $facebookUser->getId())->first();
+        $user = static::where(['email' => $socialNetworkUser->getEmail(), ['email', '!=', null]])
+            ->orWhere('google_id', $socialNetworkUser->getId())->first();
 
         if (! $user) {
             $user = static::create([
-                'google_id'   => $facebookUser->getId(),
-                'email'       => $facebookUser->getEmail(),
-                'name'        => $facebookUser->getName(),
-                'lastname'    => $facebookUser->getLastName(),
-                'photo'       => $facebookUser->getPhoto(),
+                'google_id'   => $socialNetworkUser->getId(),
+                'email'       => $socialNetworkUser->getEmail(),
+                'name'        => $socialNetworkUser->getName(),
+                'lastname'    => $socialNetworkUser->getLastName(),
+                'photo'       => $socialNetworkUser->getPhoto(),
             ]);
         }
 
-        $user->update(['google_id' => $facebookUser->getId()]);
+        $user->update(['google_id' => $socialNetworkUser->getId()]);
 
         $user->generateToken();
 
