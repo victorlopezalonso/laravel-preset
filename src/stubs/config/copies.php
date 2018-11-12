@@ -326,7 +326,7 @@ return [
             'en'  => 'The :attribute must be a date before :date.',
         ],
         [
-            'key' => 'VALIDATION_BEFORE_OR_EQUEAL',
+            'key' => 'VALIDATION_BEFORE_OR_EQUAL',
             'es'  => ':attribute debe ser una fecha anterior o igual a :date',
             'en'  => 'The :attribute must be a date before or equal to :date.',
         ],

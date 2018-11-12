@@ -20,10 +20,10 @@ class SessionsTest extends ApiTestCase
         $this->params = ['type' => 1];
 
         $this->apiCall('post', 'api/v1/session')
-            ->assertStatus(HTTP_CODE_422_UNPROCESSABLE_ENTITY)
-            ->assertSee('validations')
-            ->assertSee('email')
-            ->assertSee('password');
+             ->assertStatus(HTTP_CODE_422_UNPROCESSABLE_ENTITY)
+             ->assertSee('validations')
+             ->assertSee('email')
+             ->assertSee('password');
     }
 
     /** @test */
@@ -32,9 +32,9 @@ class SessionsTest extends ApiTestCase
         $this->params = ['type' => 2];
 
         $this->apiCall('post', 'api/v1/session')
-            ->assertStatus(HTTP_CODE_422_UNPROCESSABLE_ENTITY)
-            ->assertSee('validations')
-            ->assertSee('facebookId');
+             ->assertStatus(HTTP_CODE_422_UNPROCESSABLE_ENTITY)
+             ->assertSee('validations')
+             ->assertSee('accessToken');
     }
 
     /** @test */
@@ -43,9 +43,9 @@ class SessionsTest extends ApiTestCase
         $this->params = ['type' => 3];
 
         $this->apiCall('post', 'api/v1/session')
-            ->assertStatus(HTTP_CODE_422_UNPROCESSABLE_ENTITY)
-            ->assertSee('validations')
-            ->assertSee('googleId');
+             ->assertStatus(HTTP_CODE_422_UNPROCESSABLE_ENTITY)
+             ->assertSee('validations')
+             ->assertSee('accessToken');
     }
 
     /** @test */
@@ -95,9 +95,9 @@ class SessionsTest extends ApiTestCase
     public function login_with_facebook_returns_user()
     {
         $this->params = [
-            'type'       => 2,
-            'email'      => 'invented@email.com',
-            'facebookId' => '000000000000000000',
+            'type'        => 2,
+            'email'       => 'invented@email.com',
+            'accessToken' => '123456789',
         ];
 
         $this->apiCall('post', 'api/v1/session')->assertStatus(HTTP_CODE_200_OK)->assertSee('authorization');
@@ -108,15 +108,15 @@ class SessionsTest extends ApiTestCase
     {
         $user = factory(User::class)->create([
             'name'        => 'emailUser',
-            'email'       => 'email@user.com',
+            'email'       => 'fakeemail@example.org',
             'password'    => 'Passwd01',
             'facebook_id' => '000000000000000000',
         ]);
 
         $this->params = [
-            'type'       => 2,
-            'email'      => $user->email,
-            'facebookId' => $user->facebook_id,
+            'type'        => 2,
+            'email'       => $user->email,
+            'accessToken' => '123456789',
         ];
 
         $this->apiCall('post', 'api/v1/session')->assertStatus(HTTP_CODE_200_OK)->assertSee('authorization');
@@ -129,14 +129,14 @@ class SessionsTest extends ApiTestCase
     {
         $user = factory(User::class)->create([
             'name'     => 'emailUser',
-            'email'    => 'email@user.com',
+            'email'    => 'fakeemail@example.org',
             'password' => 'Passwd01'
         ]);
 
         $this->params = [
-            'type'     => 3,
-            'email'    => 'email@user.com',
-            'googleId' => '000000000000000000',
+            'type'        => 3,
+            'email'       => 'fakeemail@example.org',
+            'accessToken' => '123456789',
         ];
 
         $this->apiCall('post', 'api/v1/session')->assertStatus(HTTP_CODE_200_OK)->assertSee('authorization');
@@ -150,7 +150,7 @@ class SessionsTest extends ApiTestCase
         $this->params = [
             'type'     => 3,
             'email'    => 'invented@email.com',
-            'googleId' => '000000000000000000',
+            'accessToken' => '123456789',
         ];
 
         $this->apiCall('post', 'api/v1/session')->assertStatus(HTTP_CODE_200_OK)->assertSee('authorization');
@@ -159,7 +159,7 @@ class SessionsTest extends ApiTestCase
     /** @test */
     public function an_auth_user_can_update_the_token()
     {
-        if (!TOKEN_EXPIRES) {
+        if ( ! TOKEN_EXPIRES) {
             $this->assertTrue(true);
 
             return;

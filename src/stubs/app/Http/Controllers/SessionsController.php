@@ -10,6 +10,7 @@ use App\Http\Resources\Api\Users\UserAccessTokenResource;
 
 class SessionsController extends ApiController
 {
+
     /**
      * Login a user.
      *
@@ -17,6 +18,7 @@ class SessionsController extends ApiController
      *
      * @throws ApiException
      * @throws \Throwable
+     * @throws \GuzzleHttp\Exception\GuzzleException
      *
      * @return \App\Http\Responses\ApiResponse
      */

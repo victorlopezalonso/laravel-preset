@@ -3,8 +3,10 @@
 namespace App;
 
 use Ramsey\Uuid\Uuid;
+use App\Classes\Google;
 use App\Models\ApiModel;
 use Lcobucci\JWT\Parser;
+use App\Classes\Facebook;
 use App\Mail\WelcomeMail;
 use Laravel\Passport\Token;
 use App\Mail\ForgotPassMail;
@@ -214,15 +216,21 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
      * @param UserRegisterRequest $request
      *
      * @throws \Throwable
+     * @throws \GuzzleHttp\Exception\GuzzleException
      *
      * @return User
      */
     public static function registerWithFacebook(UserRegisterRequest $request)
     {
-        /** @var User $user */
-        $user = static::create($request->params('email', 'facebookId'));
+        $socialNetworkUser = Facebook::getProfile($request->get('accessToken'));
 
-        $user->savePhoto();
+        $user = static::create([
+            'facebook_id' => $socialNetworkUser->getId(),
+            'email'       => $socialNetworkUser->getEmail(),
+            'name'        => $socialNetworkUser->getName(),
+            'lastname'    => $socialNetworkUser->getLastName(),
+            'photo'       => $socialNetworkUser->getPhoto(),
+        ]);
 
         if (USER_MUST_VERIFY_EMAIL) {
             $user->sendVerificationMail();
@@ -237,15 +245,21 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
      * @param UserRegisterRequest $request
      *
      * @throws \Throwable
+     * @throws \GuzzleHttp\Exception\GuzzleException
      *
      * @return User
      */
     public static function registerWithGoogle(UserRegisterRequest $request)
     {
-        /** @var User $user */
-        $user = static::create($request->params('email', 'googleId'));
+        $socialNetworkUser = Google::getProfile($request->get('accessToken'));
 
-        $user->savePhoto();
+        $user = static::create([
+            'google_id'   => $socialNetworkUser->getId(),
+            'email'       => $socialNetworkUser->getEmail(),
+            'name'        => $socialNetworkUser->getName(),
+            'lastname'    => $socialNetworkUser->getLastName(),
+            'photo'       => $socialNetworkUser->getPhoto(),
+        ]);
 
         if (USER_MUST_VERIFY_EMAIL) {
             $user->sendVerificationMail();
@@ -284,24 +298,34 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
     }
 
     /**
+     * Login with Facebook.
+     *
      * @param UserLoginRequest $request
      *
      * @throws \Throwable
+     * @throws \GuzzleHttp\Exception\GuzzleException
      *
      * @return User
      */
     public static function loginWithFacebook(UserLoginRequest $request)
     {
-        $query = static::query();
+        $socialNetworkUser = Facebook::getProfile($request->get('accessToken'));
 
-        $query = $request->get('email') ? $query->orWhere('email', $request->get('email')) : $query;
+        /** @var self $user */
+        $user = static::where(['email' => $socialNetworkUser->getEmail(), ['email', '!=', null]])
+            ->orWhere('facebook_id', $socialNetworkUser->getId())->first();
 
-        if (! $user = $query->orWhere('facebook_id', $request->get('facebookId'))->first()) {
-            $user = static::create($request->params('email', 'facebookId', 'name', 'advertising'));
-            $user->savePhoto();
+        if (! $user) {
+            $user = static::create([
+                'facebook_id' => $socialNetworkUser->getId(),
+                'email'       => $socialNetworkUser->getEmail(),
+                'name'        => $socialNetworkUser->getName(),
+                'lastname'    => $socialNetworkUser->getLastName(),
+                'photo'       => $socialNetworkUser->getPhoto(),
+            ]);
         }
 
-        $user->update(['facebook_id' => $request->get('facebookId')]);
+        $user->update(['facebook_id' => $socialNetworkUser->getId()]);
 
         $user->generateToken();
 
@@ -314,21 +338,29 @@ class User extends ApiModel implements AuthenticatableContract, AuthorizableCont
      * @param UserLoginRequest $request
      *
      * @throws \Throwable
+     * @throws \GuzzleHttp\Exception\GuzzleException
      *
      * @return null|User
      */
     public static function loginWithGoogle(UserLoginRequest $request)
     {
-        $query = static::query();
+        $socialNetworkUser = Google::getProfile($request->get('accessToken'));
 
-        $query = $request->get('email') ? $query->orWhere('email', $request->get('email')) : $query;
+        /** @var self $user */
+        $user = static::where(['email' => $socialNetworkUser->getEmail(), ['email', '!=', null]])
+            ->orWhere('google_id', $socialNetworkUser->getId())->first();
 
-        if (! $user = $query->orWhere('google_id', $request->get('googleId'))->first()) {
-            $user = static::create($request->params('email', 'googleId', 'name', 'advertising'));
-            $user->savePhoto();
+        if (! $user) {
+            $user = static::create([
+                'google_id'   => $socialNetworkUser->getId(),
+                'email'       => $socialNetworkUser->getEmail(),
+                'name'        => $socialNetworkUser->getName(),
+                'lastname'    => $socialNetworkUser->getLastName(),
+                'photo'       => $socialNetworkUser->getPhoto(),
+            ]);
         }
 
-        $user->update(['google_id' => $request->get('googleId')]);
+        $user->update(['google_id' => $socialNetworkUser->getId()]);
 
         $user->generateToken();
 
