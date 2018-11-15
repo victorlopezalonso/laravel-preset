@@ -159,7 +159,7 @@ class LaravelInit extends Command
         $this->call('db:seed', ['--force' => true]);
 
         $this->info('Enter your admin password to set the storage folder permissions and supervisor configuration');
-        Console::exec('sudo chmod -R 775 storage');
+        Console::exec('sudo chmod -R 777 storage');
 
         $this->configureSupervisor();
     }
