@@ -7,8 +7,8 @@ use App\Models\Copy;
 use App\Models\User;
 use App\Helpers\StorageHelper;
 use App\Http\Responses\ApiResponse;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 
 class ApiController extends Controller
 {
@@ -164,5 +164,45 @@ class ApiController extends Controller
     public function response($data = null)
     {
         return $data ? $this->response->withData($data) : $this->response;
+    }
+
+    /**
+     * Respond 200 OK
+     * This is used to return an acknowledgement response indicating that the request has been accepted and then the script can continue processing.
+     *
+     * @param null  $response
+     * @param mixed $asJson
+     */
+    public function respondAndContinueExecution($response = null, $asJson = true)
+    {
+        // check if fastcgi_finish_request is callable
+        if (\is_callable('fastcgi_finish_request')) {
+            if ($response) {
+                echo $asJson ? json_encode($response) : $response;
+            }
+            session_write_close();
+            fastcgi_finish_request();
+
+            return;
+        }
+
+        ob_end_clean();
+
+        header("Connection: close\r\n");
+        header("Content-Encoding: none\r\n");
+
+        ignore_user_abort(true); // optional
+
+        ob_start();
+
+        if ($response) {
+            echo $asJson ? json_encode($response) : $response;
+        }
+
+        $size = ob_get_length();
+        header("Content-Length: ${size}");
+        ob_end_flush();     // Strange behaviour, will not work
+        flush();            // Unless both are called !
+        ob_end_clean();
     }
 }
