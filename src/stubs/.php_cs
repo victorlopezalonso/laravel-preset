@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of PHP CS Fixer.
  *
@@ -9,17 +8,13 @@
  * This source file is subject to the MIT license that is bundled
  * with this source code in the file LICENSE.
  */
-
 $header = <<<'EOF'
 This file is part of PHP CS Fixer.
-
 (c) Fabien Potencier <fabien@symfony.com>
     Dariusz Rumiński <dariusz.ruminski@gmail.com>
-
 This source file is subject to the MIT license that is bundled
 with this source code in the file LICENSE.
 EOF;
-
 $finder = PhpCsFixer\Finder::create()
     ->notPath('bootstrap/cache')
     ->notPath('storage')
@@ -29,25 +24,18 @@ $finder = PhpCsFixer\Finder::create()
     ->notName('*.blade.php')
     ->ignoreDotFiles(true)
     ->ignoreVCS(true);
-
 $config = PhpCsFixer\Config::create()
     ->setRiskyAllowed(true)
     ->setUsingCache(false)
     ->setRules([
-        '@Symfony' => true,
-        'binary_operator_spaces' => ['align_double_arrow' => true],
-        'array_syntax' => ['syntax' => 'short'],
-        'linebreak_after_opening_tag' => true,
-        'not_operator_with_successor_space' => true,
-        'ordered_imports' => ['sort_algorithm' => 'length'],
-        'phpdoc_order' => true,
         '@PHP56Migration' => true,
         '@PHPUnit60Migration:risky' => true,
         '@Symfony' => true,
         '@Symfony:risky' => true,
-        'align_multiline_comment' => true,
+        'align_multiline_comment' => ['all_multiline' => true],
         'array_indentation' => true,
         'array_syntax' => ['syntax' => 'short'],
+        'binary_operator_spaces' => ['align_double_arrow' => true],
         'blank_line_before_statement' => true,
         'combine_consecutive_issets' => true,
         'combine_consecutive_unsets' => true,
@@ -61,6 +49,7 @@ $config = PhpCsFixer\Config::create()
         'function_to_constant' => ['functions' => ['get_class', 'get_called_class', 'php_sapi_name', 'phpversion', 'pi']],
         'header_comment' => ['header' => ''],
         'heredoc_to_nowdoc' => true,
+        'linebreak_after_opening_tag' => true,
         'list_syntax' => ['syntax' => 'long'],
         'logical_operators' => true,
         'method_argument_space' => ['on_multiline' => 'ensure_fully_multiline'],
@@ -78,7 +67,9 @@ $config = PhpCsFixer\Config::create()
         'no_unset_on_property' => true,
         'no_useless_else' => true,
         'no_useless_return' => true,
+        'not_operator_with_successor_space' => true,
         'ordered_class_elements' => true,
+        'ordered_imports' => ['sort_algorithm' => 'length'],
         'php_unit_internal_class' => true,
         'php_unit_method_casing' => true,
         'php_unit_ordered_covers' => true,
@@ -101,7 +92,6 @@ $config = PhpCsFixer\Config::create()
     ])
     ->setFinder($finder)
 ;
-
 // special handling of fabbot.io service if it's using too old PHP CS Fixer version
 if (false !== getenv('FABBOT_IO')) {
     try {
@@ -117,5 +107,4 @@ if (false !== getenv('FABBOT_IO')) {
         $config->setRules([]);
     }
 }
-
 return $config;
